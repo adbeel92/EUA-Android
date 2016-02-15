@@ -72,8 +72,7 @@ public class LoggedAsFragment extends DialogFragment {
         alertDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                UserSessionManager usm = new UserSessionManager(getContext());
-                usm.logoutUser();
+                UserSessionManager.getInstance(getContext()).logoutUser();
                 dialog.dismiss();
             }
         });

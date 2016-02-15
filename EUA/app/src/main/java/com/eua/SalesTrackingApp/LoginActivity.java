@@ -101,7 +101,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
 
-        UserSessionManager usm = new UserSessionManager(getApplicationContext());
+        UserSessionManager usm = UserSessionManager.getInstance(getApplicationContext());
         if (usm.isUserLoggedIn()){
             showEditDialog(usm.getLoggedUserName());
         }

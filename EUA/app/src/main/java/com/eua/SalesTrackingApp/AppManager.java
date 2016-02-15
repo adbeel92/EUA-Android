@@ -15,7 +15,7 @@ import java.util.List;
 
 public class AppManager extends AppCompatActivity {
 
-    private final Context context = getApplicationContext();
+    //private final Context context = getApplicationContext();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +34,7 @@ public class AppManager extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.logout_action){
-            UserSessionManager.getInstance(context).logoutUser();
+            UserSessionManager.getInstance(getApplicationContext()).logoutUser();
         }
 
         return false;
@@ -55,8 +55,9 @@ public class AppManager extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (isApplicationSentToBackground(context)){
-            UserSessionManager.getInstance(context).logoutUser();
+        if (isApplicationSentToBackground(getApplicationContext())){
+            UserSessionManager.getInstance(getApplicationContext()).logoutUser();
+            Log.e("SADSADSAD", "Logging user out");
         }
     }
 }
