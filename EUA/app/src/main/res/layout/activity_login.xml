@@ -35,8 +35,8 @@
     </ScrollView>
 
     <ImageView
-        android:layout_width="280dp"
-        android:layout_height="wrap_content"
+        android:layout_width="260dp"
+        android:layout_height="130dp"
         android:id="@+id/imageView"
         android:src="@drawable/logo1"
         android:layout_above="@+id/login_form"

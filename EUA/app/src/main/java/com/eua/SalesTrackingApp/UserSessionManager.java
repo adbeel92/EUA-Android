@@ -62,7 +62,6 @@ public class UserSessionManager {
         return false;
     }
 
-
     public String getLoggedUserEmail(){
         return pref.getString(KEY_EMAIL, null);
     }

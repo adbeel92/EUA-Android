@@ -16,7 +16,6 @@ import android.widget.ImageView;
 import com.eua.SalesTrackingApp.models.Agency;
 
 import java.util.List;
-
 public class ChoosingActivity extends AppManager {
 
     @Override

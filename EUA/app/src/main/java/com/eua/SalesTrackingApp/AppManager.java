@@ -13,9 +13,6 @@ import android.widget.Toast;
 
 import java.util.List;
 
-/**
- * Created by rubymobile on 2/4/16.
- */
 public class AppManager extends AppCompatActivity {
 
     private final Context context = getApplicationContext();

@@ -147,13 +147,16 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mEmailView.setError(getString(R.string.error_field_required));
             focusView = mEmailView;
             cancel = true;
-        } else {
-            if (TextUtils.isEmpty(password)) {
-                mPasswordView.setError(getString(R.string.error_field_required));
-                focusView = mPasswordView;
-                cancel = true;
-            }
         }
+        if (TextUtils.isEmpty(password)) {
+            mPasswordView.setError(getString(R.string.error_field_required));
+            focusView = mPasswordView;
+            cancel = true;
+        }/* else if (!isEmailValid(email)) {
+            mEmailView.setError(getString(R.string.error_invalid_email));
+            focusView = mEmailView;
+            cancel = true;
+        }*/
 
         if (cancel) {
             // There was an error; don't attempt login and focus the first
@@ -305,7 +308,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         error = t.getMessage();
                     }
                 });
-                Thread.sleep(2500);
+                Thread.sleep(2000);
             }catch (InterruptedException e){
                 error = e.getMessage();
             }
@@ -321,11 +324,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 if (!obtainedId.equals("-4")){
                     Intent intent = new Intent(getApplicationContext(), ChoosingActivity.class);
                     final CheckBox rememberPassword = (CheckBox)findViewById(R.id.rememberPassword);
-                    UserSessionManager usm = UserSessionManager.getInstance(context);
+                    UserSessionManager usm = new UserSessionManager(context);
                     usm.createUserLoginSession(loggedUser.getName(), loggedUser.getEmail(), loggedUser.getId(), rememberPassword.isChecked());
                     startActivity(intent);
-                    Log.e("DEBUG", usm.getLoggedUserName() + "  " + usm.getLoggedUserEmail() + " " + String.valueOf(rememberPassword.isChecked()));
-                    //Log.e("DEBUG", gson.toJson(usm));
                     finish();
                 }else{
                     mPasswordView.setError(getString(R.string.error_incorrect_password));
@@ -336,8 +337,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         }
 
-            @Override
-            protected void onCancelled() {
+        @Override
+        protected void onCancelled() {
             mAuthTask = null;
             showProgress(false);
         }
@@ -349,4 +350,3 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         finish();
     }
 }
-
