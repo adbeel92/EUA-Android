@@ -102,6 +102,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mProgressView = findViewById(R.id.login_progress);
 
         UserSessionManager usm = UserSessionManager.getInstance(getApplicationContext());
+        Log.e("SSSSSS", String.valueOf(usm.isUserLoggedIn()));
         if (usm.isUserLoggedIn()){
             showEditDialog(usm.getLoggedUserName());
         }
@@ -295,10 +296,17 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     @Override
                     public void onResponse(Response<UserResponse> response, Retrofit retrofit) {
                         int statusCode = response.code();
-                        UserResponse userResponse = response.body();
-                        loggedUser = userResponse.Usuario_ValidarAccesoResult.get(0);
-                        obtainedId = loggedUser.getId();
-                        authenticated = true;
+                        if (statusCode==200){
+                            UserResponse userResponse = response.body();
+                            loggedUser = userResponse.Usuario_ValidarAccesoResult.get(0);
+                            obtainedId = loggedUser.getId();
+                            authenticated = true;
+                        }else{
+                            error = "No se pudo obtener datos del servidor. Status " + String.valueOf(statusCode);
+                            authenticated = true;
+                            loggedUser = User.dummyUser();
+                            obtainedId = loggedUser.getId();
+                        }
                     }
 
                     @Override

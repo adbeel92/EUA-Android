@@ -3,6 +3,7 @@ package com.eua.SalesTrackingApp;
 import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -34,7 +35,10 @@ public class AppManager extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.logout_action){
-            UserSessionManager.getInstance(getApplicationContext()).logoutUser();
+            UserSessionManager.getInstance(getApplicationContext()).ultimateLogout();
+            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+            finish();
+            startActivity(intent);
         }
 
         return false;
@@ -52,12 +56,4 @@ public class AppManager extends AppCompatActivity {
         return false;
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (isApplicationSentToBackground(getApplicationContext())){
-            UserSessionManager.getInstance(getApplicationContext()).logoutUser();
-            Log.e("SADSADSAD", "Logging user out");
-        }
-    }
 }

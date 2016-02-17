@@ -76,7 +76,14 @@ public class UserSessionManager {
         if (!isPasswordRememberable()){
             editor.clear();
             editor.commit();
+            Log.e("DSADSAASDADSDAS", "Really login user out");
+            Log.e("DSADSAASDADSDAS", String.valueOf(isUserLoggedIn()));
         }
+    }
+
+    public void ultimateLogout(){
+        editor.clear();
+        editor.commit();
     }
 
 

@@ -10,6 +10,14 @@ public class User {
 
     private String UsuarioId;
 
+    public static User dummyUser(){
+        User user = new User();
+        user.setEmail("foo@example.com");
+        user.setName("Default User");
+        user.setId("1");
+        return user;
+    }
+
     public void setEmail(String email){
         this.UsuarioEmail = email;
     }
