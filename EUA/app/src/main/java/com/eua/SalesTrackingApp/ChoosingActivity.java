@@ -9,6 +9,9 @@ import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -27,6 +30,27 @@ public class ChoosingActivity extends AppManager {
         final ImageView iconB = (ImageView) findViewById(R.id.agenciesIcon);
         iconA.setOnClickListener(nextActivity);
         iconB.setOnClickListener(nextActivity);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the currently selected menu XML resource.
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.settings, menu);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.logout_action){
+            UserSessionManager.getInstance(getApplicationContext()).ultimateLogout();
+            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+            finish();
+            startActivity(intent);
+        }
+
+        return false;
     }
 
     private View.OnClickListener nextActivity = new View.OnClickListener() {

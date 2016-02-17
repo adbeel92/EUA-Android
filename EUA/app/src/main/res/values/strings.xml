@@ -16,7 +16,7 @@
     <string name="logout_action">Cerrar sesion</string>
     <string name="programming_button">Programación</string>
     <string name="agencies_button">Agencias</string>
-    <string name="remember_password">Recordar Contraseña</string>
+    <string name="remember_password">Recordarme</string>
     <string name="login_screen">Ingresa tu usuario y contraseña</string>
     <string name="stock_left_checkbox">Dejé stock</string>
     <string name="brochure_left_checkbox">Dejé folletería</string>

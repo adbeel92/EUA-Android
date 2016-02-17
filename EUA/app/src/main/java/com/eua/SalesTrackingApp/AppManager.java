@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -23,26 +24,6 @@ public class AppManager extends AppCompatActivity {
         super.onCreate(savedInstanceState);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the currently selected menu XML resource.
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.settings, menu);
-
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.logout_action){
-            UserSessionManager.getInstance(getApplicationContext()).ultimateLogout();
-            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-            finish();
-            startActivity(intent);
-        }
-
-        return false;
-    }
 
     public boolean isApplicationSentToBackground(final Context context) {
         ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
@@ -56,4 +37,12 @@ public class AppManager extends AppCompatActivity {
         return false;
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (isApplicationSentToBackground(getApplicationContext())){
+            UserSessionManager.getInstance(getApplicationContext()).logoutUser();
+            ActivityCompat.finishAffinity(this);
+        }
+    }
 }
