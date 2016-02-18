@@ -68,6 +68,9 @@ public class UserSessionManager {
     public String getLoggedUserName(){
         return pref.getString(KEY_NAME, null);
     }
+    public String getLoggedUserId(){
+        return pref.getString(KEY_ID, null);
+    }
 
     /**
      * Clear session details
@@ -76,8 +79,6 @@ public class UserSessionManager {
         if (!isPasswordRememberable()){
             editor.clear();
             editor.commit();
-            Log.e("DSADSAASDADSDAS", "Really login user out");
-            Log.e("DSADSAASDADSDAS", String.valueOf(isUserLoggedIn()));
         }
     }
 

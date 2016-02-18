@@ -20,6 +20,6 @@ public class AgenciesActivity extends AppManager {
         setContentView(R.layout.activity_agencies);
         final ListView generalAgencies = (ListView)findViewById(R.id.generalAgencies);
         final Agency[] agenciesList = Agency.generatedAgencies();
-        generalAgencies.setAdapter(new CustomAgenciesAdapter(AgencyDetailActivity.class, agenciesList, false));
+        //generalAgencies.setAdapter(new CustomAgenciesAdapter(AgencyDetailActivity.class, agenciesList, false));
     }
 }

@@ -13,11 +13,29 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.eua.SalesTrackingApp.models.User;
+
 import java.util.List;
+
+import retrofit.Call;
+import retrofit.Callback;
+import retrofit.GsonConverterFactory;
+import retrofit.Response;
+import retrofit.Retrofit;
 
 public class AppManager extends AppCompatActivity {
 
     //private final Context context = getApplicationContext();
+    final String api_endpoint = "http://testing.euroamericanassistance.com/wsRMovilApp.svc/";
+
+    final String BASE_URL = api_endpoint;
+    final Retrofit retrofit = new Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build();
+
+    final WSInterface apiService =
+            retrofit.create(WSInterface.class);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

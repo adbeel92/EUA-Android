@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.eua.SalesTrackingApp.models.Agency;
+import com.eua.SalesTrackingApp.models.AgencyVisit;
 
 import java.util.ArrayList;
 
@@ -19,11 +20,11 @@ import java.util.ArrayList;
  * Created by rubymobile on 2/4/16.
  */
 public class CustomAgenciesAdapter extends BaseAdapter {
-    Agency[] agenciesList;
+    ArrayList<AgencyVisit> agenciesList;
     Class nextActivity;
     Boolean numeration;
 
-    public CustomAgenciesAdapter(Class activityClass, Agency[] agencies, boolean num) {
+    public CustomAgenciesAdapter(Class activityClass, ArrayList<AgencyVisit> agencies, boolean num) {
         // TODO Auto-generated constructor stub
         agenciesList=agencies;
         nextActivity =activityClass;
@@ -32,12 +33,12 @@ public class CustomAgenciesAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return agenciesList.length;
+        return agenciesList.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return agenciesList[position];
+        return agenciesList.get(position);
     }
 
     @Override
@@ -60,13 +61,13 @@ public class CustomAgenciesAdapter extends BaseAdapter {
             holder.index.setText(String.valueOf(position+1));
         }
         holder.text=(TextView) rowView.findViewById(R.id.agencyName);
-        holder.text.setText(agenciesList[position].getName());
+        holder.text.setText(agenciesList.get(position).getVisitasAgenciaNombre());
         rowView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
                 Intent intent = new Intent(v.getContext(), nextActivity);
-                intent.putExtra("title", agenciesList[position].getName());
+                intent.putExtra("title", agenciesList.get(position).getVisitasAgenciaNombre());
                 v.getContext().startActivity(intent);
             }
         });
