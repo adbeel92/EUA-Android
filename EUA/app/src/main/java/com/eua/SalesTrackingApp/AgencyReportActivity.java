@@ -1,24 +1,47 @@
 package com.eua.SalesTrackingApp;
 
 import android.Manifest;
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.net.ConnectivityManager;
+import android.os.AsyncTask;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import retrofit.Call;
+import retrofit.Callback;
+import retrofit.Response;
+import retrofit.Retrofit;
+
 public class AgencyReportActivity extends AppManager implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private GoogleApiClient mGoogleApiClient;
-    private EditText mLatitudeText;
-    private EditText mLongitudeText;
+    private String visitId;
+    private String loggedUserId;
+    private EditText interviewerName;
+    private EditText stock;
+    private EditText brochureQty;
+    private EditText comments;
+    private String latitude = "";
+    private String longitude = "";
+    private String error = "";
+    private SendReport mReportTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,8 +50,14 @@ public class AgencyReportActivity extends AppManager implements GoogleApiClient.
         Intent intent = getIntent();
         setTitle(intent.getStringExtra("title"));
         getSupportActionBar().setHomeButtonEnabled(true);
-        mLatitudeText = (EditText)findViewById(R.id.brochure_quantity);
-        mLongitudeText = (EditText)findViewById(R.id.stock_quantity);
+        interviewerName = (EditText) findViewById(R.id.interviewer_name);
+        brochureQty = (EditText)findViewById(R.id.brochure_quantity);
+        stock = (EditText)findViewById(R.id.stock_quantity);
+        comments = (EditText) findViewById(R.id.comments_edit_view);
+        Button reportButton = (Button)findViewById(R.id.report);
+        visitId = intent.getStringExtra("id");
+        loggedUserId = UserSessionManager.getInstance(getApplicationContext()).getLoggedUserId();
+        reportButton.setOnClickListener(reportInterview);
         // Create an instance of GoogleAPIClient.
         if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -38,6 +67,102 @@ public class AgencyReportActivity extends AppManager implements GoogleApiClient.
                     .build();
         }
 
+    }
+
+    private View.OnClickListener reportInterview = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (isNetworkConnected()){
+                Date date = new Date();
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");
+                String dateHour = sdf.format(date);
+                String name = interviewerName.getText().toString();
+                String stockQty = stock.getText().toString();
+                String brochures = brochureQty.getText().toString();
+                String commentsText = comments.getText().toString();
+                String lat = latitude;
+                String lng = longitude;
+                mReportTask = new SendReport(visitId, loggedUserId, name, stockQty, brochures, commentsText, dateHour, lat, lng);
+                mReportTask.execute((Void) null);
+            }else{
+                Toast.makeText(getApplicationContext(), "No estás conectado a Internet, inténtalo más tarde", Toast.LENGTH_LONG).show();
+            }
+        }
+    };
+
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        return cm.getActiveNetworkInfo() != null;
+    }
+
+    public class SendReport extends AsyncTask<Void, Void, Boolean> {
+        String reportResponse = "";
+        String visitId;
+        String loggedUserId;
+        String interviewerName;
+        String stockQty;
+        String brochureQty;
+        String commentsText;
+        String date;
+        String lat;
+        String lng;
+
+        SendReport(String visit, String userId, String intName, String stock, String broch, String comments, String dateTime, String latitude, String longitude) {
+            visitId = visit;
+            loggedUserId = userId;
+            interviewerName = intName;
+            stockQty = stock;
+            brochureQty = broch;
+            commentsText = comments;
+            date = dateTime;
+            lat = latitude;
+            lng = longitude;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            // TODO: attempt authentication against a network service.
+
+            try {
+                final Call<ReportResponse> call = apiService.sendReport(visitId, loggedUserId, interviewerName, stockQty, brochureQty, commentsText, date, lat, lng);
+                call.enqueue(new Callback<ReportResponse>() {
+                    @Override
+                    public void onResponse(Response<ReportResponse> response, Retrofit retrofit) {
+                        int statusCode = response.code();
+                        if (statusCode == 200) {
+                            ReportResponse serverResponse = response.body();
+                            reportResponse = serverResponse.Visita_VisitaAppsGuardaActualizaResult;
+                        } else {
+                            error = "No se pudo obtener datos del servidor. Status " + String.valueOf(statusCode);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Throwable t) {
+                        error = t.getMessage();
+                    }
+                });
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                error = e.getMessage();
+            }
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean success) {
+            if (success) {
+                Toast.makeText(getApplicationContext(), reportResponse, Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();
+                Log.e("AAAAAAAAAA", error);
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+        }
     }
 
     @Override
@@ -62,8 +187,8 @@ public class AgencyReportActivity extends AppManager implements GoogleApiClient.
 
         if (location != null) {
             //TODO How to send location parameters to webservice
-            //mLatitudeText.setText(String.valueOf(location.getLatitude()));
-            //mLongitudeText.setText(String.valueOf(location.getLongitude()));
+            latitude = String.valueOf(location.getLatitude());  //Text.setText(String.valueOf(location.getLatitude()));
+            longitude = String.valueOf(location.getLongitude()); //mLongitudeText.setText(String.valueOf(location.getLongitude()));
         }else{
             Log.e("GPSing", "null location");
         }

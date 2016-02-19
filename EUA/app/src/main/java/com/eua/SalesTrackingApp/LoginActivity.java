@@ -299,7 +299,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         int statusCode = response.code();
                         if (statusCode==200){
                             UserResponse userResponse = response.body();
-                            loggedUser = User.dummyUser(); //userResponse.Usuario_ValidarAccesoResult.get(0);
+                            loggedUser = userResponse.Usuario_ValidarAccesoResult.get(0);
                             obtainedId = loggedUser.getId();
                             authenticated = true;
                         }else{

@@ -68,6 +68,7 @@ public class CustomAgenciesAdapter extends BaseAdapter {
                 // TODO Auto-generated method stub
                 Intent intent = new Intent(v.getContext(), nextActivity);
                 intent.putExtra("title", agenciesList.get(position).getVisitasAgenciaNombre());
+                intent.putExtra("id", agenciesList.get(position).getVisitasAgenciaId());
                 v.getContext().startActivity(intent);
             }
         });

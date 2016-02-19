@@ -45,8 +45,6 @@ public class ProgrammingActivity extends AppManager {
         programmedAgencies = (ListView)findViewById(R.id.programmedAgencies);
         mActivTask = new GetAgenciesVisitTask(usm.getLoggedUserId());
         mActivTask.execute((Void) null);
-        Log.e("HHHHHHHHHH", usm.getLoggedUserId());
-        Log.e("HHHHHHHHHH", "calling asynctask");
         SimpleDateFormat sdf = new SimpleDateFormat("EEEE dd/MM/yyyy");
         String dayOfTheWeek = sdf.format(new Date());
         today.setText(dayOfTheWeek.substring(0,1).toUpperCase()+dayOfTheWeek.substring(1));
@@ -70,7 +68,7 @@ public class ProgrammingActivity extends AppManager {
             // TODO: attempt authentication against a network service.
 
             try {
-                final Call<AgencyVisitResponse> call = apiService.getVisitResponse(startDate, endDate, promotorId);
+                final Call<AgencyVisitResponse> call = apiService.getVisitResponse(startDate, endDate, "9");
                 call.enqueue(new Callback<AgencyVisitResponse>() {
                     @Override
                     public void onResponse(Response<AgencyVisitResponse> response, Retrofit retrofit) {
@@ -89,7 +87,6 @@ public class ProgrammingActivity extends AppManager {
                         error = t.getMessage();
                     }
                 });
-                Log.e("CCCC", "getting vists");
                 Thread.sleep(2000);
             } catch (InterruptedException e) {
                 error = e.getMessage();
@@ -100,12 +97,9 @@ public class ProgrammingActivity extends AppManager {
         @Override
         protected void onPostExecute(final Boolean success) {
             if (success) {
-                Log.e("AAAAAAAAAA", "post execute");
-                Log.e("AAAAAAAAAA", error);
                 programmedAgencies.setAdapter(new CustomAgenciesAdapter(AgencyReportActivity.class, agenciesList, true));
             } else {
-                Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();
-                Log.e("AAAAAAAAAA", error);
+                Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();;
             }
         }
 
