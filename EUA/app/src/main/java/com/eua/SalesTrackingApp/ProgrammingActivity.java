@@ -97,7 +97,7 @@ public class ProgrammingActivity extends AppManager {
         @Override
         protected void onPostExecute(final Boolean success) {
             if (success) {
-                programmedAgencies.setAdapter(new CustomAgenciesAdapter(AgencyReportActivity.class, agenciesList, true));
+                programmedAgencies.setAdapter(new CustomAgenciesVisitAdapter(AgencyReportActivity.class, agenciesList, true));
             } else {
                 Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();;
             }

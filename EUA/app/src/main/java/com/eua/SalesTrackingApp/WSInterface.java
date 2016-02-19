@@ -1,5 +1,6 @@
 package com.eua.SalesTrackingApp;
 
+import com.eua.SalesTrackingApp.models.Agency;
 import com.eua.SalesTrackingApp.models.VisitReport;
 
 import retrofit.Call;
@@ -15,6 +16,13 @@ public interface WSInterface {
 
     @GET("Visita_PromotorListado")
     Call<AgencyVisitResponse> getVisitResponse(@Query("dte_FechaInicio") String startDate, @Query("dte_FechaFin") String endDate, @Query("int_PromotorID") String promotorId);
+
+    @GET("Visita_VisitaAppsAgencias")
+    Call<AgencyResponse> getAgencyResponse(@Query("int_pAgenciaID") String agencyId,
+                                           @Query("int_pAgenciaPerfilId") String agencyProfileId,
+                                           @Query("int_pAgenciaPromotorId") String loggedUserId,
+                                           @Query("int_pAgenciaActivo") String agencyActive,
+                                           @Query("int_pAgenciaPaisId") String agencyCountryId);
 
     @GET("Visita_VisitaAppsGuardaActualiza")
     Call<ReportResponse> sendReport(@Query("int_visitasappsVisitasId") String visitaId,

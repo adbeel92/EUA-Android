@@ -8,41 +8,78 @@ import java.util.ArrayList;
  * Created by rubymobile on 2/2/16.
  */
 public class Agency {
-    private String name = "";
-    private String email = "";
-    private String phone = "";
+    private String AgenciaID = "";
+    private String AgenciaNombre = "";
+    private String AgenciaDireccion = "";
+    private String AgenciaRUC = "";
+    private String AgenciaTelefono = "";
+    private String AgenciaEmail = "";
+    private String AgenciaComision = "";
+    private String AgenciaCredito = "";
 
-    public Agency(String name, String email){
-        this.name = name;
-        this.email = email;
+    public String getAgenciaID() {
+        return AgenciaID;
     }
 
-    public void setName(String name){
-        this.name = name;
+    public void setAgenciaID(String agenciaID) {
+        AgenciaID = agenciaID;
     }
 
-    public String getName(){
-        return this.name;
+    public String getAgenciaNombre() {
+        return AgenciaNombre;
     }
 
-    public static Agency[] generatedAgencies(){
-        Agency[] agencies = new Agency[15];
-        agencies[0]=(new Agency("Agency 1", "agency1@example.com"));
-        agencies[1]=(new Agency("Agency 2", "agency2@example.com"));
-        agencies[2]=(new Agency("Agency 3", "agency3@example.com"));
-        agencies[3]=(new Agency("Agency 4", "agency4@example.com"));
-        agencies[4]=(new Agency("Agency 5", "agency5@example.com"));
-        agencies[5]=(new Agency("Agency 6", "agency6@example.com"));
-        agencies[6]=(new Agency("Agency 7", "agency7@example.com"));
-        agencies[7]=(new Agency("Agency 8", "agency8@example.com"));
-        agencies[8]=(new Agency("Agency 9", "agency9@example.com"));
-        agencies[9]=(new Agency("Agency 10", "agency10@example.com"));
-        agencies[10]=(new Agency("Agency 11", "agency11@example.com"));
-        agencies[11]=(new Agency("Agency 12", "agency12@example.com"));
-        agencies[12]=(new Agency("Agency 13", "agency13@example.com"));
-        agencies[13]=(new Agency("Agency 14", "agency14@example.com"));
-        agencies[14]=(new Agency("Agency 15", "agency15@example.com"));
-        return agencies;
+    public void setAgenciaNombre(String agenciaNombre) {
+        AgenciaNombre = agenciaNombre;
     }
+
+    public String getAgenciaDireccion() {
+        return AgenciaDireccion;
+    }
+
+    public void setAgenciaDireccion(String agenciaDireccion) {
+        AgenciaDireccion = agenciaDireccion;
+    }
+
+    public String getAgenciaRUC() {
+        return AgenciaRUC;
+    }
+
+    public void setAgenciaRUC(String agenciaRUC) {
+        AgenciaRUC = agenciaRUC;
+    }
+
+    public String getAgenciaTelefono() {
+        return AgenciaTelefono;
+    }
+
+    public void setAgenciaTelefono(String agenciaTelefono) {
+        AgenciaTelefono = agenciaTelefono;
+    }
+
+    public String getAgenciaEmail() {
+        return AgenciaEmail;
+    }
+
+    public void setAgenciaEmail(String agenciaEmail) {
+        AgenciaEmail = agenciaEmail;
+    }
+
+    public String getAgenciaComision() {
+        return AgenciaComision;
+    }
+
+    public void setAgenciaComision(String agenciaComision) {
+        AgenciaComision = agenciaComision;
+    }
+
+    public String getAgenciaCredito() {
+        return AgenciaCredito;
+    }
+
+    public void setAgenciaCredito(String agenciaCredito) {
+        AgenciaCredito = agenciaCredito;
+    }
+
 
 }
