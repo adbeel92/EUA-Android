@@ -13,8 +13,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Nombre"
-        android:id="@+id/textView5"
+        android:text="Nombre:"
+        android:id="@+id/nameTag"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
@@ -23,9 +23,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Dirección"
-        android:id="@+id/textView6"
-        android:layout_below="@+id/textView5"
+        android:text="Dirección:"
+        android:id="@+id/addressTag"
+        android:layout_below="@+id/nameTag"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginTop="33dp" />
@@ -34,20 +34,22 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="RUC."
-        android:id="@+id/textView7"
-        android:layout_above="@+id/textView8"
+        android:text="RUC.:"
+        android:id="@+id/legalIdTag"
+        android:layout_above="@+id/phoneTag"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginBottom="37dp" />
+        android:layout_marginBottom="37dp"
+        android:layout_alignRight="@+id/emailTag"
+        android:layout_alignEnd="@+id/emailTag" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Teléfono"
-        android:id="@+id/textView8"
-        android:layout_above="@+id/textView9"
+        android:text="Teléfono:"
+        android:id="@+id/phoneTag"
+        android:layout_above="@+id/emailTag"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginBottom="34dp" />
@@ -56,9 +58,42 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="E-Mail"
-        android:id="@+id/textView9"
+        android:text="E-Mail:"
+        android:id="@+id/emailTag"
         android:layout_centerVertical="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Comisión:"
+        android:id="@+id/comisionTag"
+        android:layout_below="@+id/emailTag"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="30dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Crédito:"
+        android:id="@+id/creditTag"
+        android:layout_below="@+id/comisionTag"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="30dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Visita programada:"
+        android:id="@+id/programmedVisitTag"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="43dp" />
 </RelativeLayout>

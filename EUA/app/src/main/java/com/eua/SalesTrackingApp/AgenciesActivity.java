@@ -29,10 +29,8 @@ public class AgenciesActivity extends AppManager {
     final private String agencyProfileId = "0";
     final private String agencyActive = "1";
     final private String agencyCountryId = "0";
-    private String promotorId = "15";
+    private String promotorId = "";
     boolean success = false;
-
-    //private GetAgenciesTask mAgencyTask;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,19 +38,18 @@ public class AgenciesActivity extends AppManager {
         getSupportActionBar().setHomeButtonEnabled(true);
         setContentView(R.layout.activity_agencies);
         generalAgencies = (ListView)findViewById(R.id.generalAgencies);
-//        mAgencyTask = new GetAgenciesTask(UserSessionManager.getInstance(getApplicationContext()).getLoggedUserId());
-//        mAgencyTask.execute((Void) null);
-        final Call<AgencyResponse> call = apiService.getAgencyResponse(agencyId, agencyProfileId, promotorId, agencyActive, agencyCountryId);
+        promotorId = UserSessionManager.getInstance(getApplicationContext()).getLoggedUserId();
+        final Call<AgencyResponse> call = apiService.getAgencyResponse(agencyId, agencyProfileId, "15", agencyActive, agencyCountryId);
         call.enqueue(new Callback<AgencyResponse>() {
             @Override
             public void onResponse(Response<AgencyResponse> response, Retrofit retrofit) {
                 int statusCode = response.code();
                 if (statusCode == 200) {
-                    success = true;
-                    AgencyResponse agencyResponse = response.body();
-                    agenciesList = agencyResponse.Visita_VisitaAppsAgenciasResult;
+                    agenciesList = response.body().Visita_VisitaAppsAgenciasResult;
                     generalAgencies.setAdapter(new CustomAgenciesAdapter(AgencyDetailActivity.class, agenciesList, false));
-                    Log.e("AGENCIEs", String.valueOf(agenciesList.size()));
+                    if (agenciesList.size() == 0){
+                        Toast.makeText(getApplicationContext(), "No hay agencias", Toast.LENGTH_LONG).show();
+                    }
                 } else {
                     success = true;
                     error = "No se pudo obtener datos del servidor. Status " + String.valueOf(statusCode);
@@ -62,6 +59,7 @@ public class AgenciesActivity extends AppManager {
             @Override
             public void onFailure(Throwable t) {
                 error = t.getMessage();
+                Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();
             }
         });
     }
