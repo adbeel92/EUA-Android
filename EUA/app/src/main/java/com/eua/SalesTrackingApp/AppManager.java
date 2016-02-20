@@ -1,9 +1,16 @@
 package com.eua.SalesTrackingApp;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.annotation.TargetApi;
 import android.app.ActivityManager;
+import android.app.LoaderManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.Loader;
+import android.database.Cursor;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +18,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.eua.SalesTrackingApp.models.User;
@@ -23,11 +31,11 @@ import retrofit.GsonConverterFactory;
 import retrofit.Response;
 import retrofit.Retrofit;
 
-public class AppManager extends AppCompatActivity {
+public class AppManager extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     //private final Context context = getApplicationContext();
     final String api_endpoint = "http://testing.euroamericanassistance.com/wsRMovilApp.svc/";
-
+    View mProgressView;
     final String BASE_URL = api_endpoint;
     final Retrofit retrofit = new Retrofit.Builder()
             .baseUrl(BASE_URL)
@@ -61,6 +69,44 @@ public class AppManager extends AppCompatActivity {
         if (isApplicationSentToBackground(getApplicationContext())){
             UserSessionManager.getInstance(getApplicationContext()).logoutUser();
             ActivityCompat.finishAffinity(this);
+        }
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return null;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
+    public void showProgress(final boolean show) {
+        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
+        // for very easy animations. If available, use these APIs to fade-in
+        // the progress spinner.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+
+            mProgressView.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
+            mProgressView.animate().setDuration(shortAnimTime).alpha(
+                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mProgressView.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
+                }
+            });
+        } else {
+            // The ViewPropertyAnimator APIs are not available, so simply show
+            // and hide the relevant UI components.
+            mProgressView.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
         }
     }
 }

@@ -21,7 +21,9 @@
     <activity
             android:name=".LoginActivity"
             android:label="@string/app_name"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
 
 
     <intent-filter>
@@ -31,15 +33,25 @@
             </intent-filter>
         </activity>
         <activity android:name=".ChoosingActivity"
-            android:parentActivityName="com.eua.SalesTrackingApp.LoginActivity"/>
+            android:parentActivityName="com.eua.SalesTrackingApp.LoginActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"/>
         <activity android:name=".ProgrammingActivity"
-            android:parentActivityName="com.eua.SalesTrackingApp.ChoosingActivity"/>
+            android:parentActivityName="com.eua.SalesTrackingApp.ChoosingActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"/>
         <activity android:name=".AgenciesActivity"
-            android:parentActivityName="com.eua.SalesTrackingApp.ChoosingActivity"/>
+            android:parentActivityName="com.eua.SalesTrackingApp.ChoosingActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"/>
         <activity android:name=".AgencyDetailActivity"
-            android:parentActivityName="com.eua.SalesTrackingApp.AgenciesActivity"/>
+            android:parentActivityName="com.eua.SalesTrackingApp.AgenciesActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"/>
         <activity android:name=".AgencyReportActivity"
-            android:parentActivityName="com.eua.SalesTrackingApp.ProgrammingActivity">
+            android:parentActivityName="com.eua.SalesTrackingApp.ProgrammingActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
         </activity>
     </application>
 

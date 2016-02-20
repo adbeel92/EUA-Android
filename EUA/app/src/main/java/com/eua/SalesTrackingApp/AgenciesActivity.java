@@ -1,23 +1,32 @@
 package com.eua.SalesTrackingApp;
 
+import android.app.LoaderManager;
 import android.content.Context;
+import android.content.Intent;
+import android.content.Loader;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.CheckBox;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.eua.SalesTrackingApp.models.Agency;
 import com.eua.SalesTrackingApp.models.User;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
 import retrofit.Call;
 import retrofit.Callback;
+import retrofit.GsonConverterFactory;
 import retrofit.Response;
 import retrofit.Retrofit;
 
@@ -31,6 +40,8 @@ public class AgenciesActivity extends AppManager {
     final private String agencyCountryId = "0";
     private String promotorId = "";
     boolean success = false;
+    private GetAgenciesTask agenciesTask;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,29 +49,53 @@ public class AgenciesActivity extends AppManager {
         getSupportActionBar().setHomeButtonEnabled(true);
         setContentView(R.layout.activity_agencies);
         generalAgencies = (ListView)findViewById(R.id.generalAgencies);
+        mProgressView = findViewById(R.id.login_progress);
+        mProgressView.bringToFront();
         promotorId = UserSessionManager.getInstance(getApplicationContext()).getLoggedUserId();
-        final Call<AgencyResponse> call = apiService.getAgencyResponse(agencyId, agencyProfileId, "15", agencyActive, agencyCountryId);
-        call.enqueue(new Callback<AgencyResponse>() {
-            @Override
-            public void onResponse(Response<AgencyResponse> response, Retrofit retrofit) {
-                int statusCode = response.code();
-                if (statusCode == 200) {
-                    agenciesList = response.body().Visita_VisitaAppsAgenciasResult;
-                    generalAgencies.setAdapter(new CustomAgenciesAdapter(AgencyDetailActivity.class, agenciesList, false));
-                    if (agenciesList.size() == 0){
-                        Toast.makeText(getApplicationContext(), "No hay agencias", Toast.LENGTH_LONG).show();
-                    }
-                } else {
-                    success = true;
-                    error = "No se pudo obtener datos del servidor. Status " + String.valueOf(statusCode);
-                }
-            }
+        agenciesTask = new GetAgenciesTask();
+        agenciesTask.execute((Void) null);
+        showProgress(true);
+    }
 
-            @Override
-            public void onFailure(Throwable t) {
-                error = t.getMessage();
+
+
+    public class GetAgenciesTask extends AsyncTask<Void, Void, Boolean> {
+        final Context context = getApplicationContext();
+
+        GetAgenciesTask() {
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            // TODO: attempt authentication against a network service.
+
+            final Call<AgencyResponse> call = apiService.getAgencyResponse(agencyId, agencyProfileId, "15", agencyActive, agencyCountryId);
+            try {
+                Response<AgencyResponse> response = call.execute();
+                agenciesList = response.body().Visita_VisitaAppsAgenciasResult;
+                success = true;
+                if (agenciesList.size() == 0) {
+                    Toast.makeText(getApplicationContext(), "No hay agencias", Toast.LENGTH_LONG).show();
+                }
+            } catch (IOException e) {
+                success = false;
+                e.printStackTrace();
+            }
+            return success;
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean success) {
+            showProgress(false);
+            if (success) {
+                generalAgencies.setAdapter(new CustomAgenciesAdapter(AgencyDetailActivity.class, agenciesList, false));
+            } else{
                 Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();
             }
-        });
+        }
+
+        @Override
+        protected void onCancelled() {
+        }
     }
 }
