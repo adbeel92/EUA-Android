@@ -19,6 +19,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.eua.SalesTrackingApp.models.User;
@@ -36,6 +37,7 @@ public class AppManager extends AppCompatActivity implements LoaderManager.Loade
     //private final Context context = getApplicationContext();
     final String api_endpoint = "http://testing.euroamericanassistance.com/wsRMovilApp.svc/";
     View mProgressView;
+    TextView mEmtpyText;
     final String BASE_URL = api_endpoint;
     final Retrofit retrofit = new Retrofit.Builder()
             .baseUrl(BASE_URL)
@@ -89,9 +91,6 @@ public class AppManager extends AppCompatActivity implements LoaderManager.Loade
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     public void showProgress(final boolean show) {
-        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
-        // for very easy animations. If available, use these APIs to fade-in
-        // the progress spinner.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
             int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
@@ -104,8 +103,6 @@ public class AppManager extends AppCompatActivity implements LoaderManager.Loade
                 }
             });
         } else {
-            // The ViewPropertyAnimator APIs are not available, so simply show
-            // and hide the relevant UI components.
             mProgressView.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
         }
     }

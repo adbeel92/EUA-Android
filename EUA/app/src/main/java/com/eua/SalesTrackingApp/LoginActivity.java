@@ -35,6 +35,7 @@ import android.widget.Toast;
 import com.eua.SalesTrackingApp.models.User;
 import com.google.gson.Gson;
 
+import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
@@ -291,35 +292,19 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             WSInterface apiService =
                     retrofit.create(WSInterface.class);
 
-            try{
-                final Call<UserResponse> call = apiService.getUserResponse(mEmail, mPassword);
-                call.enqueue(new Callback<UserResponse>() {
-                    @Override
-                    public void onResponse(Response<UserResponse> response, Retrofit retrofit) {
-                        int statusCode = response.code();
-                        if (statusCode==200){
-                            UserResponse userResponse = response.body();
-                            loggedUser = userResponse.Usuario_ValidarAccesoResult.get(0);
-                            obtainedId = loggedUser.getId();
-                            authenticated = true;
-                        }else{
-                            error = "No se pudo obtener datos del servidor. Status " + String.valueOf(statusCode);
-                            authenticated = true;
-                            loggedUser = User.dummyUser();
-                            obtainedId = loggedUser.getId();
-                        }
-                    }
 
-                    @Override
-                    public void onFailure(Throwable t) {
-                        // Log error here since request failed
-                        authenticated = false;
-                        error = t.getMessage();
-                    }
-                });
-                Thread.sleep(2000);
-            }catch (InterruptedException e){
+            final Call<UserResponse> call = apiService.getUserResponse(mEmail, mPassword);
+            try {
+                Response<UserResponse> response = call.execute();
+                UserResponse userResponse = response.body();
+                loggedUser = userResponse.Usuario_ValidarAccesoResult.get(0);
+                obtainedId = loggedUser.getId();
+                authenticated = true;
+            } catch (IOException e) {
                 error = e.getMessage();
+                authenticated = true;
+                loggedUser = User.dummyUser();
+                obtainedId = loggedUser.getId();
             }
             return authenticated;
         }

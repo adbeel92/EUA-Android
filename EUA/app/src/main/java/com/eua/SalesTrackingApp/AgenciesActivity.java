@@ -50,7 +50,8 @@ public class AgenciesActivity extends AppManager {
         setContentView(R.layout.activity_agencies);
         generalAgencies = (ListView)findViewById(R.id.generalAgencies);
         mProgressView = findViewById(R.id.login_progress);
-        mProgressView.bringToFront();
+        mEmtpyText = (TextView) findViewById(R.id.emptyResultsText);
+        mEmtpyText.setVisibility(View.INVISIBLE);
         promotorId = UserSessionManager.getInstance(getApplicationContext()).getLoggedUserId();
         agenciesTask = new GetAgenciesTask();
         agenciesTask.execute((Void) null);
@@ -74,9 +75,6 @@ public class AgenciesActivity extends AppManager {
                 Response<AgencyResponse> response = call.execute();
                 agenciesList = response.body().Visita_VisitaAppsAgenciasResult;
                 success = true;
-                if (agenciesList.size() == 0) {
-                    Toast.makeText(getApplicationContext(), "No hay agencias", Toast.LENGTH_LONG).show();
-                }
             } catch (IOException e) {
                 success = false;
                 e.printStackTrace();
@@ -88,7 +86,12 @@ public class AgenciesActivity extends AppManager {
         protected void onPostExecute(final Boolean success) {
             showProgress(false);
             if (success) {
-                generalAgencies.setAdapter(new CustomAgenciesAdapter(AgencyDetailActivity.class, agenciesList, false));
+                if (agenciesList.size() == 0){
+                    mEmtpyText.setText("No hay agencias");
+                    mEmtpyText.setVisibility(View.VISIBLE);
+                }else{
+                    generalAgencies.setAdapter(new CustomAgenciesAdapter(AgencyDetailActivity.class, agenciesList, false));
+                }
             } else{
                 Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();
             }
