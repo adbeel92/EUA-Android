@@ -17,12 +17,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.eua.SalesTrackingApp.models.VisitReport;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import retrofit.Call;
 import retrofit.Callback;
@@ -72,20 +74,24 @@ public class AgencyReportActivity extends AppManager implements GoogleApiClient.
     private View.OnClickListener reportInterview = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            Date date = new Date();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");
+            String dateHour = sdf.format(date);
+            String name = interviewerName.getText().toString();
+            String stockQty = stock.getText().toString();
+            String brochures = brochureQty.getText().toString();
+            String commentsText = comments.getText().toString();
+            String lat = latitude;
+            String lng = longitude;
             if (isNetworkConnected()){
-                Date date = new Date();
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");
-                String dateHour = sdf.format(date);
-                String name = interviewerName.getText().toString();
-                String stockQty = stock.getText().toString();
-                String brochures = brochureQty.getText().toString();
-                String commentsText = comments.getText().toString();
-                String lat = latitude;
-                String lng = longitude;
                 mReportTask = new SendReport(visitId, loggedUserId, name, stockQty, brochures, commentsText, dateHour, lat, lng);
                 mReportTask.execute((Void) null);
             }else{
+                VisitReport vr = new VisitReport(visitId, loggedUserId, name, stockQty, brochures, commentsText, lat, lng);
+                vr.save();
                 Toast.makeText(getApplicationContext(), "No estás conectado a Internet, inténtalo más tarde", Toast.LENGTH_LONG).show();
+                List<VisitReport> vrpts = VisitReport.listAll(VisitReport.class);
+                Log.e("INFO:","Acabas de guardar " + String.valueOf(vrpts.size()) + "reporte");
             }
         }
     };
