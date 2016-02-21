@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import com.eua.SalesTrackingApp.models.Agency;
 import com.eua.SalesTrackingApp.models.AgencyVisit;
+import com.google.gson.Gson;
 
 import junit.framework.Test;
 
@@ -33,13 +34,14 @@ public class AgencyDetailActivity extends AppManager {
     final private String agencyCountryId = "0";
     private String promotorId = "";
     private String error = "";
+    private Gson gson = new Gson();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_agency_detail);
         Intent intent = getIntent();
-        setTitle(intent.getStringExtra("title"));
+        setTitle(gson.fromJson(intent.getStringExtra("agency"), Agency.class).getAgenciaNombre());
         agencyId = intent.getStringExtra("id");
         agencyName = (TextView) findViewById(R.id.nameTag);
         agencyAddress = (TextView) findViewById(R.id.addressTag);
@@ -49,26 +51,8 @@ public class AgencyDetailActivity extends AppManager {
         agencyComision = (TextView) findViewById(R.id.comisionTag);
         agencyCredit = (TextView) findViewById(R.id.creditTag);
         getSupportActionBar().setHomeButtonEnabled(true);
-        final Call<AgencyResponse> call = apiService.getAgencyResponse(agencyId, agencyProfileId, "15", agencyActive, agencyCountryId);
-        call.enqueue(new Callback<AgencyResponse>() {
-            @Override
-            public void onResponse(Response<AgencyResponse> response, Retrofit retrofit) {
-                int statusCode = response.code();
-                if (statusCode == 200) {
-                    agency = response.body().Visita_VisitaAppsAgenciasResult.get(0);
-                    setValues(agency);
-
-                } else {
-                    error = "No se pudo obtener datos del servidor. Status " + String.valueOf(statusCode);
-                }
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-                error = t.getMessage();
-                Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();
-            }
-        });
+        agency = gson.fromJson(intent.getStringExtra("agency"), Agency.class);
+        setValues(agency);
     }
 
     private void setValues(Agency agency){

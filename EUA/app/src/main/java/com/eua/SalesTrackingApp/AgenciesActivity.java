@@ -77,7 +77,7 @@ public class AgenciesActivity extends AppManager {
                 success = true;
             } catch (IOException e) {
                 success = false;
-                e.printStackTrace();
+                error = e.getMessage();
             }
             return success;
         }

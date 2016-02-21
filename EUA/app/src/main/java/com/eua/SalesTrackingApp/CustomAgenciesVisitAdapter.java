@@ -1,6 +1,7 @@
 package com.eua.SalesTrackingApp;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,6 +55,11 @@ public class CustomAgenciesVisitAdapter extends BaseAdapter {
         if (numeration){
             holder.index=(TextView) rowView.findViewById(R.id.agencyIndex);
             holder.index.setText(String.valueOf(position+1));
+        }
+        if (position % 2 == 0){
+            rowView.setBackgroundColor(Color.rgb(173, 173, 173));
+        }else{
+            rowView.setBackgroundColor(Color.rgb(205, 205, 205));
         }
         holder.text=(TextView) rowView.findViewById(R.id.agencyName);
         holder.text.setText(agenciesList.get(position).getVisitasAgenciaNombre());

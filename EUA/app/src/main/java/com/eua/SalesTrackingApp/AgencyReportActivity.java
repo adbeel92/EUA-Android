@@ -2,6 +2,7 @@ package com.eua.SalesTrackingApp;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -22,6 +23,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -31,7 +33,7 @@ import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
 
-public class AgencyReportActivity extends AppManager implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class AgencyReportActivity extends AppManager implements  GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private GoogleApiClient mGoogleApiClient;
     private String visitId;
@@ -43,7 +45,16 @@ public class AgencyReportActivity extends AppManager implements GoogleApiClient.
     private String latitude = "";
     private String longitude = "";
     private String error = "";
+    private Boolean success;
     private SendReport mReportTask;
+    private String dateHour;
+    private String name;
+    private String stockQty;
+    private String brochures;
+    private String commentsText;
+    private String lat;
+    private String lng;
+    private NetworkChangeReceiver ncr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,22 +87,20 @@ public class AgencyReportActivity extends AppManager implements GoogleApiClient.
         public void onClick(View v) {
             Date date = new Date();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");
-            String dateHour = sdf.format(date);
-            String name = interviewerName.getText().toString();
-            String stockQty = stock.getText().toString();
-            String brochures = brochureQty.getText().toString();
-            String commentsText = comments.getText().toString();
-            String lat = latitude;
-            String lng = longitude;
+            dateHour = sdf.format(date);
+            name = interviewerName.getText().toString();
+            stockQty = stock.getText().toString();
+            brochures = brochureQty.getText().toString();
+            commentsText = comments.getText().toString();
+            lat = latitude;
+            lng = longitude;
             if (isNetworkConnected()){
                 mReportTask = new SendReport(visitId, loggedUserId, name, stockQty, brochures, commentsText, dateHour, lat, lng);
                 mReportTask.execute((Void) null);
             }else{
-                VisitReport vr = new VisitReport(visitId, loggedUserId, name, stockQty, brochures, commentsText, lat, lng);
+                VisitReport vr = VisitReport.makeInstance(visitId, loggedUserId, name, stockQty, brochures, commentsText, lat, lng);
                 vr.save();
-                Toast.makeText(getApplicationContext(), "No estás conectado a Internet, inténtalo más tarde", Toast.LENGTH_LONG).show();
-                List<VisitReport> vrpts = VisitReport.listAll(VisitReport.class);
-                Log.e("INFO:","Acabas de guardar " + String.valueOf(vrpts.size()) + "reporte");
+                Toast.makeText(getApplicationContext(), "No se detectó una conexión a Internet, este formulario se enviará automáticamente en cuanto estés conectado.", Toast.LENGTH_LONG).show();
             }
         }
     };
@@ -100,6 +109,27 @@ public class AgencyReportActivity extends AppManager implements GoogleApiClient.
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
         return cm.getActiveNetworkInfo() != null;
+    }
+
+    public class NetworkChangeReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final ConnectivityManager connMgr = (ConnectivityManager) context
+                    .getSystemService(Context.CONNECTIVITY_SERVICE);
+
+            if (connMgr.getActiveNetworkInfo() != null){
+                List<VisitReport> vrpts = VisitReport.listAll(VisitReport.class);
+                if (vrpts.size()>0){
+                    VisitReport report = vrpts.get(0);
+                    mReportTask = new SendReport(report.getVisitId(), report.getLoggedUserId(), report.getInterviewerName(), report.getStock(), report.getBrochureQty(), report.getComments(), dateHour, report.getLatitude(), report.getLongitude());
+                    mReportTask.execute((Void) null);
+                    report.delete();
+                }
+                Log.e("Network", "Connected");
+            }else{
+                Log.e("Network", "Not Connected");
+            }
+        }
     }
 
     public class SendReport extends AsyncTask<Void, Void, Boolean> {
@@ -130,27 +160,13 @@ public class AgencyReportActivity extends AppManager implements GoogleApiClient.
         protected Boolean doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
 
+            final Call<ReportResponse> call = apiService.sendReport(visitId, loggedUserId, interviewerName, stockQty, brochureQty, commentsText, date, lat, lng);
             try {
-                final Call<ReportResponse> call = apiService.sendReport(visitId, loggedUserId, interviewerName, stockQty, brochureQty, commentsText, date, lat, lng);
-                call.enqueue(new Callback<ReportResponse>() {
-                    @Override
-                    public void onResponse(Response<ReportResponse> response, Retrofit retrofit) {
-                        int statusCode = response.code();
-                        if (statusCode == 200) {
-                            ReportResponse serverResponse = response.body();
-                            reportResponse = serverResponse.Visita_VisitaAppsGuardaActualizaResult;
-                        } else {
-                            error = "No se pudo obtener datos del servidor. Status " + String.valueOf(statusCode);
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Throwable t) {
-                        error = t.getMessage();
-                    }
-                });
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
+                Response<ReportResponse> response = call.execute();
+                reportResponse = response.body().Visita_VisitaAppsGuardaActualizaResult;
+                success = true;
+            } catch (IOException e) {
+                success = false;
                 error = e.getMessage();
             }
             return true;

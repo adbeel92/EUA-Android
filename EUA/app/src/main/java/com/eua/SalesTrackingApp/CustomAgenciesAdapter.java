@@ -3,6 +3,7 @@ package com.eua.SalesTrackingApp;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,7 @@ import android.widget.Toast;
 
 import com.eua.SalesTrackingApp.models.Agency;
 import com.eua.SalesTrackingApp.models.AgencyVisit;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
@@ -23,6 +25,7 @@ public class CustomAgenciesAdapter extends BaseAdapter {
     ArrayList<Agency> agenciesList;
     Class nextActivity;
     Boolean numeration;
+    Gson gson = new Gson();
 
     public CustomAgenciesAdapter(Class activityClass, ArrayList<Agency> agencies, boolean num) {
         // TODO Auto-generated constructor stub
@@ -60,14 +63,20 @@ public class CustomAgenciesAdapter extends BaseAdapter {
             holder.index=(TextView) rowView.findViewById(R.id.agencyIndex);
             holder.index.setText(String.valueOf(position+1));
         }
+        if (position % 2 == 0){
+            rowView.setBackgroundColor(Color.rgb(173,173,173));
+        }else{
+            rowView.setBackgroundColor(Color.rgb(205,205,205));
+        }
         holder.text=(TextView) rowView.findViewById(R.id.agencyName);
         holder.text.setText(agenciesList.get(position).getAgenciaNombre());
         rowView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
+                String serializedAgency = gson.toJson(agenciesList.get(position));
                 Intent intent = new Intent(v.getContext(), nextActivity);
-                intent.putExtra("title", agenciesList.get(position).getAgenciaNombre());
+                intent.putExtra("agency", serializedAgency);
                 v.getContext().startActivity(intent);
             }
         });

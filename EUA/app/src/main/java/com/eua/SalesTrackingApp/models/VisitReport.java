@@ -12,6 +12,39 @@ public class VisitReport extends SugarRecord{
     private String loggedUserId;
     private String interviewerName;
     private String stock;
+
+    public String getVisitId() {
+        return visitId;
+    }
+
+    public String getLoggedUserId() {
+        return loggedUserId;
+    }
+
+    public String getInterviewerName() {
+        return interviewerName;
+    }
+
+    public String getStock() {
+        return stock;
+    }
+
+    public String getBrochureQty() {
+        return brochureQty;
+    }
+
+    public String getComments() {
+        return comments;
+    }
+
+    public String getLatitude() {
+        return latitude;
+    }
+
+    public String getLongitude() {
+        return longitude;
+    }
+
     private String brochureQty;
     private String comments;
     private String latitude = "";
@@ -20,14 +53,16 @@ public class VisitReport extends SugarRecord{
     public VisitReport(){
     }
 
-    public VisitReport(String visitId, String loggedUserId, String interviewerName, String stock, String brochureQty, String comments, String latitude, String longitude){
-        this.visitId = visitId;
-        this.loggedUserId = loggedUserId;
-        this.interviewerName = stock;
-        this.brochureQty = brochureQty;
-        this.comments = comments;
-        this.latitude = latitude;
-        this.longitude = longitude;
+    public static VisitReport makeInstance(String visitId, String loggedUserId, String interviewerName, String stock, String brochureQty, String comments, String latitude, String longitude){
+        VisitReport vr = new VisitReport();
+        vr.visitId = visitId;
+        vr.loggedUserId = loggedUserId;
+        vr.interviewerName = stock;
+        vr.brochureQty = brochureQty;
+        vr.comments = comments;
+        vr.latitude = latitude;
+        vr.longitude = longitude;
+        return vr;
     }
 
 }

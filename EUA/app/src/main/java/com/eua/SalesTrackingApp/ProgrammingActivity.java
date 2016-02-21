@@ -89,7 +89,7 @@ public class ProgrammingActivity extends AppManager {
                 }
             } catch (IOException e) {
                 success = false;
-                e.printStackTrace();
+                error = e.getMessage();
             }
             return success;
         }
