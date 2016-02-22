@@ -26,6 +26,7 @@ import com.eua.SalesTrackingApp.models.VisitReport;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -50,7 +51,7 @@ public class AgencyReportActivity extends AppManager implements GoogleApiClient.
     private String longitude = "";
     private String error = "Unknown error";
     private Boolean success;
-    private SendReport mReportTask;
+    private SendReport mReportTask = null;
     private String dateHour;
     private String name;
     private String stockQty;
@@ -59,7 +60,10 @@ public class AgencyReportActivity extends AppManager implements GoogleApiClient.
     private String lat;
     private String lng;
     private Boolean cancel;
+    private Context context;
+    private Context foreignContext;
     private NetworkChangeReceiver ncr = null;
+    private Gson gson;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +96,8 @@ public class AgencyReportActivity extends AppManager implements GoogleApiClient.
         }
 
     }
+
+
 
     private View.OnClickListener validateCheckbox = new View.OnClickListener() {
         @Override
@@ -154,8 +160,9 @@ public class AgencyReportActivity extends AppManager implements GoogleApiClient.
             }
             if (!cancel){
                 if (isNetworkConnected()){
-                    mReportTask = new SendReport(visitId, loggedUserId, name, stockQty, brochures, commentsText, dateHour, lat, lng);
-                    mReportTask.execute((Void) null);
+//                    mReportTask = new SendReport(visitId, loggedUserId, name, stockQty, brochures, commentsText, dateHour, lat, lng);
+//                    mReportTask.execute((Void) null);
+                    makeRequest(getApplicationContext(), visitId, loggedUserId, name, stockQty, brochures, commentsText, dateHour, lat, lng);
                 }else{
                     VisitReport vr = new VisitReport(visitId, loggedUserId, name, stockQty, brochures, commentsText, lat, lng);
                     vr.save();
@@ -164,6 +171,12 @@ public class AgencyReportActivity extends AppManager implements GoogleApiClient.
             }
         }
     };
+
+    public void makeRequest(Context context,String visit, String userId, String intName, String stock, String broch, String comments, String dateTime, String latitude, String longitude){
+        foreignContext = context;
+        mReportTask = new SendReport(visit, userId, intName, stock, broch, comments, dateTime, latitude, longitude);
+        mReportTask.execute((Void) null);
+    }
 
     private boolean isNetworkConnected() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -217,17 +230,24 @@ public class AgencyReportActivity extends AppManager implements GoogleApiClient.
 
         @Override
         protected void onPostExecute(final Boolean success) {
+            try{
+                context = getApplicationContext();
+            }catch (NullPointerException e){
+                context = foreignContext;
+            }
+            mReportTask = null;
             if (success) {
                 try{
-                    Toast.makeText(getApplicationContext(), reportResponse, Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, reportResponse, Toast.LENGTH_LONG).show();
                     VisitReport.deleteAll(VisitReport.class);
+                    finish();
                 }catch (NullPointerException e){
-                    //Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();
-                    Log.e("THIS", "FAILED");
+                    Toast.makeText(context, error, Toast.LENGTH_LONG).show();
                 }
             } else {
-                Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();
+                Toast.makeText(context, error, Toast.LENGTH_LONG).show();
             }
+            finish();
         }
 
         @Override

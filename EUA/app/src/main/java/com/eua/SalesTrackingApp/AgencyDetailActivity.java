@@ -1,8 +1,10 @@
 package com.eua.SalesTrackingApp;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -12,7 +14,12 @@ import com.google.gson.Gson;
 
 import junit.framework.Test;
 
+import org.w3c.dom.Text;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import retrofit.Call;
 import retrofit.Callback;
@@ -27,11 +34,15 @@ public class AgencyDetailActivity extends AppManager {
     private TextView agencyEmail;
     private TextView agencyComision;
     private TextView agencyCredit;
+    private TextView programmedVisit;
+    private TextView programmedVisitDate;
     private Agency agency;
     private String agencyId = "";
     final private String agencyProfileId = "0";
     final private String agencyActive = "1";
     final private String agencyCountryId = "0";
+    private String programmedDate;
+    private Date date;
     private String promotorId = "";
     private String error = "";
     private Gson gson = new Gson();
@@ -42,6 +53,7 @@ public class AgencyDetailActivity extends AppManager {
         setContentView(R.layout.activity_agency_detail);
         Intent intent = getIntent();
         setTitle(gson.fromJson(intent.getStringExtra("agency"), Agency.class).getAgenciaNombre());
+        programmedDate = gson.fromJson(intent.getStringExtra("agency"), Agency.class).getAgenciaFechaProgramada();
         agencyId = intent.getStringExtra("id");
         agencyName = (TextView) findViewById(R.id.nameTag);
         agencyAddress = (TextView) findViewById(R.id.addressTag);
@@ -50,12 +62,14 @@ public class AgencyDetailActivity extends AppManager {
         agencyEmail = (TextView) findViewById(R.id.emailTag);
         agencyComision = (TextView) findViewById(R.id.comisionTag);
         agencyCredit = (TextView) findViewById(R.id.creditTag);
+        programmedVisit = (TextView) findViewById(R.id.programmedVisitTag);
+        programmedVisitDate = (TextView) findViewById(R.id.programmedVisitDateTag);
         getSupportActionBar().setHomeButtonEnabled(true);
-        agency = gson.fromJson(intent.getStringExtra("agency"), Agency.class);
+        agency = gson.fromJson(intent.getStringExtra("agency"), Agency.class);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
         setValues(agency);
     }
 
-    private void setValues(Agency agency){
+    private void setValues(final Agency agency){
         agencyName.setText(agencyName.getText().toString() + " " + agency.getAgenciaNombre());
         agencyAddress.setText(agencyAddress.getText().toString() + " " + agency.getAgenciaDireccion());
         agencyLegalId.setText(agencyLegalId.getText().toString() + " " + agency.getAgenciaRUC());
@@ -63,5 +77,29 @@ public class AgencyDetailActivity extends AppManager {
         agencyEmail.setText(agencyEmail.getText().toString() + " " + agency.getAgenciaEmail());
         agencyComision.setText(agencyComision.getText().toString() + " " + agency.getAgenciaComision());
         agencyCredit.setText(agencyCredit.getText().toString() + " " + agency.getAgenciaCredito());
+        SimpleDateFormat sdf2 = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat sdf3 = new SimpleDateFormat("yyMMddHHmmssZ");
+        try {
+            date = sdf3.parse(programmedDate);
+            programmedVisitDate.setText(sdf2.format(date));
+            if (date == new Date()){
+                programmedVisitDate.setTextColor(Color.BLUE);
+                programmedVisitDate.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // TODO Auto-generated method stub
+                        Intent intent = new Intent(v.getContext(), AgencyReportActivity.class);
+                        intent.putExtra("title", agency.getAgenciaNombre());
+                        intent.putExtra("id", agency.getAgenciaID());
+                        v.getContext().startActivity(intent);
+                    }
+                });
+            }
+        } catch (ParseException e) {
+            programmedVisitDate.setText("No tiene visita programada");
+            e.printStackTrace();
+        }
     }
+
+
 }

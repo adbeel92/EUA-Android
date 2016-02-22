@@ -17,11 +17,14 @@ import android.widget.Toast;
 import com.eua.SalesTrackingApp.models.Agency;
 import com.eua.SalesTrackingApp.models.AgencyVisit;
 import com.eua.SalesTrackingApp.models.User;
+import com.google.gson.Gson;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import retrofit.Call;
 import retrofit.Callback;
@@ -31,13 +34,16 @@ import retrofit.Retrofit;
 
 public class ProgrammingActivity extends AppManager {
 
-    private ArrayList<AgencyVisit> visitsList = new ArrayList<>();
+    private ArrayList<AgencyVisit> visitsList;
     private String error = "";
     private Boolean success;
     private ListView programmedAgencies;
     private Date date = new Date();
+    private Date dateTest;
     String promotorId = "";
+    boolean contains;
     private GetVisitsTask visitsTask;
+    private Gson gson;
 
 
     @Override
@@ -51,13 +57,15 @@ public class ProgrammingActivity extends AppManager {
         programmedAgencies = (ListView)findViewById(R.id.programmedAgencies);
         promotorId = usm.getLoggedUserId();
         SimpleDateFormat sdf = new SimpleDateFormat("EEEE dd/MM/yyyy");
+        SimpleDateFormat sdf2 = new SimpleDateFormat("MM/dd/yyyy");
+        SimpleDateFormat sdf3 = new SimpleDateFormat("yyMMddHHmmssZ");
         String dayOfTheWeek = sdf.format(date);
         today.setText(dayOfTheWeek.substring(0, 1).toUpperCase() + dayOfTheWeek.substring(1));
         mProgressView = findViewById(R.id.login_progress);
         mEmtpyText = (TextView) findViewById(R.id.emptyResultsText);
         mEmtpyText.setVisibility(View.INVISIBLE);
         promotorId = UserSessionManager.getInstance(getApplicationContext()).getLoggedUserId();
-        visitsTask = new GetVisitsTask(sdf.format(date), sdf.format(date));
+        visitsTask = new GetVisitsTask(sdf2.format(date), sdf2.format(date));
         visitsTask.execute((Void) null);
         showProgress(true);
     }
@@ -68,25 +76,19 @@ public class ProgrammingActivity extends AppManager {
         private String endDate;
 
         GetVisitsTask(String firstDate, String secondDate ) {
-            //startDate = firstDate;
-            //endDate = secondDate;
-            startDate = "02/13/2016";
-            endDate = "02/13/2016";
+            startDate = firstDate;
+            endDate = secondDate;
         }
 
         @Override
         protected Boolean doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
 
-            final Call<AgencyVisitResponse> call = apiService.getVisitResponse(startDate, endDate , "9");
-            //final Call<AgencyVisitResponse> call = apiService.getVisitResponse(agencyId, agencyProfileId, "15", agencyActive, agencyCountryId);
+            final Call<AgencyVisitResponse> call = apiService.getVisitResponse(startDate, endDate , promotorId);
             try {
                 Response<AgencyVisitResponse> response = call.execute();
                 visitsList = response.body().Visita_PromotorListadoResult;
                 success = true;
-                if (visitsList.size() == 0) {
-                    Toast.makeText(getApplicationContext(), "No hay visitas programadas", Toast.LENGTH_LONG).show();
-                }
             } catch (IOException e) {
                 success = false;
                 error = e.getMessage();

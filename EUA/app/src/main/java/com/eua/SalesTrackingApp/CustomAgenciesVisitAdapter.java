@@ -11,16 +11,17 @@ import android.widget.TextView;
 import com.eua.SalesTrackingApp.models.AgencyVisit;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by unobtainium on 19/02/16.
  */
 public class CustomAgenciesVisitAdapter extends BaseAdapter {
-    ArrayList<AgencyVisit> agenciesList;
+    List<AgencyVisit> agenciesList;
     Class nextActivity;
     Boolean numeration;
 
-    public CustomAgenciesVisitAdapter(Class activityClass, ArrayList<AgencyVisit> agencies, boolean num) {
+    public CustomAgenciesVisitAdapter(Class activityClass, List<AgencyVisit> agencies, boolean num) {
         // TODO Auto-generated constructor stub
         agenciesList=agencies;
         nextActivity =activityClass;

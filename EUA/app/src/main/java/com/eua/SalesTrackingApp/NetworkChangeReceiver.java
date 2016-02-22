@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Log;
+
 import com.eua.SalesTrackingApp.models.VisitReport;
 
 import java.text.SimpleDateFormat;
@@ -27,8 +29,17 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
         if (isNetworkConnected(context)){
             if (list.size()>0){
                 VisitReport report = list.get(0);
-                 mReportTask = new AgencyReportActivity().new SendReport(report.getVisitId(), report.getLoggedUserId(), report.getInterviewerName(), report.getStock(), report.getBrochureQty(), report.getComments(), dateHour, report.getLatitude(), report.getLongitude());
-                mReportTask.execute((Void) null);
+                Log.e("data", report.getVisitId());
+                Log.e("data", report.getLoggedUserId());
+                Log.e("data", report.getInterviewerName());
+                Log.e("data", report.getStock());
+                Log.e("data", report.getBrochureQty());
+                Log.e("data", report.getComments());
+                Log.e("date", dateHour);
+                Log.e("data", report.getLatitude());
+                Log.e("data", report.getLongitude());
+                new AgencyReportActivity().makeRequest(context, report.getVisitId(), report.getLoggedUserId(), report.getInterviewerName(), report.getStock(), report.getBrochureQty(), report.getComments(), dateHour, report.getLatitude(), report.getLongitude());
+                //new AgencyReportActivity().makeRequest("12", "9", "jose perez", "0", "0", "comentario", "2016/02/12 15:33:13", "-75.554", "-17.454");
             }
         }
     }
@@ -38,4 +49,6 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         return (netInfo != null && netInfo.isConnected());
     }
+
+
 }

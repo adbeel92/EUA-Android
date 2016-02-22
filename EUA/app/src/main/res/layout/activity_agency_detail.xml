@@ -96,4 +96,15 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginBottom="43dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/programmedVisitDateTag"
+        android:layout_alignTop="@+id/programmedVisitTag"
+        android:layout_toRightOf="@+id/programmedVisitTag"
+        android:layout_toEndOf="@+id/programmedVisitTag"
+        android:layout_marginLeft="42dp"
+        android:layout_marginStart="42dp" />
 </RelativeLayout>

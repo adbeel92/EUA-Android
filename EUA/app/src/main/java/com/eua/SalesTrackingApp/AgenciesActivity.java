@@ -70,7 +70,7 @@ public class AgenciesActivity extends AppManager {
         protected Boolean doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
 
-            final Call<AgencyResponse> call = apiService.getAgencyResponse(agencyId, agencyProfileId, "15", agencyActive, agencyCountryId);
+            final Call<AgencyResponse> call = apiService.getAgencyResponse(agencyId, agencyProfileId, promotorId, agencyActive, agencyCountryId);
             try {
                 Response<AgencyResponse> response = call.execute();
                 agenciesList = response.body().Visita_VisitaAppsAgenciasResult;

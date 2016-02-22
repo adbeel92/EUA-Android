@@ -3,6 +3,7 @@ package com.eua.SalesTrackingApp.models;
 import com.eua.SalesTrackingApp.AgenciesActivity;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by rubymobile on 2/2/16.
@@ -16,6 +17,21 @@ public class Agency {
     private String AgenciaEmail = "";
     private String AgenciaComision = "";
     private String AgenciaCredito = "";
+    private String agenciaFechaProgramada = "";
+
+    public String  getAgenciaFechaProgramada() {
+        String dateReceived = agenciaFechaProgramada;
+        if (dateReceived.equals("0")){
+            return dateReceived;
+        }else {
+            String dateFormatted = dateReceived.substring(6,17) + "-" + dateReceived.substring(20,23);
+            return  dateFormatted;
+        }
+    }
+
+    public void setAgenciaFechaProgramada(String agenciaFechaProgramada) {
+        this.agenciaFechaProgramada = agenciaFechaProgramada;
+    }
 
     public String getAgenciaID() {
         return AgenciaID;
