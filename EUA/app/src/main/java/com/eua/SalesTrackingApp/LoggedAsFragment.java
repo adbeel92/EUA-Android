@@ -14,15 +14,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.CheckBox;
 
-
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link LoggedAsFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link LoggedAsFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class LoggedAsFragment extends DialogFragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -35,10 +26,8 @@ public class LoggedAsFragment extends DialogFragment {
     private OnFragmentInteractionListener mListener;
 
     public LoggedAsFragment() {
-        // Required empty public constructor
     }
 
-    // TODO: Rename and change types and number of parameters
     public static LoggedAsFragment newInstance(String name) {
         LoggedAsFragment fragment = new LoggedAsFragment();
         Bundle args = new Bundle();
@@ -90,9 +79,6 @@ public class LoggedAsFragment extends DialogFragment {
         super.onViewCreated(view, savedInstanceState);
         getDialog().getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-
-        // Create the AlertDialog object and return it
-        //return builder.create();
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -119,16 +105,6 @@ public class LoggedAsFragment extends DialogFragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);

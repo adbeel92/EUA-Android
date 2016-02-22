@@ -1,5 +1,9 @@
-package com.eua.SalesTrackingApp;
+package com.eua.SalesTrackingApp.retrofit;
 
+import com.eua.SalesTrackingApp.AgencyResponse;
+import com.eua.SalesTrackingApp.AgencyVisitResponse;
+import com.eua.SalesTrackingApp.ReportResponse;
+import com.eua.SalesTrackingApp.UserResponse;
 import com.eua.SalesTrackingApp.models.Agency;
 import com.eua.SalesTrackingApp.models.VisitReport;
 

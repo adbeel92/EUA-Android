@@ -7,34 +7,24 @@ import android.app.ActivityManager;
 import android.app.LoaderManager;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.eua.SalesTrackingApp.models.User;
+import com.eua.SalesTrackingApp.retrofit.WSInterface;
 
 import java.util.List;
 
-import retrofit.Call;
-import retrofit.Callback;
 import retrofit.GsonConverterFactory;
-import retrofit.Response;
 import retrofit.Retrofit;
 
 public class AppManager extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    //private final Context context = getApplicationContext();
     final String api_endpoint = "http://testing.euroamericanassistance.com/wsRMovilApp.svc/";
     View mProgressView;
     TextView mEmtpyText;

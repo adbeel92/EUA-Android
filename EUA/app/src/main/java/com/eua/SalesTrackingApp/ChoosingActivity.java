@@ -34,7 +34,6 @@ public class ChoosingActivity extends AppManager {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the currently selected menu XML resource.
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.settings, menu);
 

@@ -46,11 +46,6 @@ public class UserSessionManager {
         editor.commit();
     }
 
-    /**
-     * Check login method will check user login status
-     * If false it will redirect user to login page
-     * Else do anything
-     * */
     public boolean checkLogin(){
         if(!this.isUserLoggedIn()){
             Intent i = new Intent(_context, LoginActivity.class);

@@ -63,7 +63,7 @@ public class CustomAgenciesAdapter extends BaseAdapter {
             holder.index=(TextView) rowView.findViewById(R.id.agencyIndex);
             holder.index.setText(String.valueOf(position+1));
         }
-        if (position % 2 == 0){
+        if (position % 2 == 1){
             rowView.setBackgroundColor(Color.rgb(173,173,173));
         }else{
             rowView.setBackgroundColor(Color.rgb(205,205,205));

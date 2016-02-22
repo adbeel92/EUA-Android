@@ -12,9 +12,13 @@ import android.os.AsyncTask;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -33,7 +37,7 @@ import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
 
-public class AgencyReportActivity extends AppManager implements  GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class AgencyReportActivity extends AppManager implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private GoogleApiClient mGoogleApiClient;
     private String visitId;
@@ -44,7 +48,7 @@ public class AgencyReportActivity extends AppManager implements  GoogleApiClient
     private EditText comments;
     private String latitude = "";
     private String longitude = "";
-    private String error = "";
+    private String error = "Unknown error";
     private Boolean success;
     private SendReport mReportTask;
     private String dateHour;
@@ -54,7 +58,8 @@ public class AgencyReportActivity extends AppManager implements  GoogleApiClient
     private String commentsText;
     private String lat;
     private String lng;
-    private NetworkChangeReceiver ncr;
+    private Boolean cancel;
+    private NetworkChangeReceiver ncr = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,10 +72,16 @@ public class AgencyReportActivity extends AppManager implements  GoogleApiClient
         brochureQty = (EditText)findViewById(R.id.brochure_quantity);
         stock = (EditText)findViewById(R.id.stock_quantity);
         comments = (EditText) findViewById(R.id.comments_edit_view);
+        CheckBox stockCb = (CheckBox) findViewById(R.id.stock_left_checkbox);
+        CheckBox brochureCb = (CheckBox) findViewById(R.id.brochure_left_checkbox);
+        stock.setEnabled(false);
+        brochureQty.setEnabled(false);
+        stockCb.setOnClickListener(validateCheckbox);
+        brochureCb.setOnClickListener(validateCheckbox);
         Button reportButton = (Button)findViewById(R.id.report);
         visitId = intent.getStringExtra("id");
         loggedUserId = UserSessionManager.getInstance(getApplicationContext()).getLoggedUserId();
-        reportButton.setOnClickListener(reportInterview);
+        reportButton.setOnClickListener(reportInterview);;
         // Create an instance of GoogleAPIClient.
         if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -82,6 +93,28 @@ public class AgencyReportActivity extends AppManager implements  GoogleApiClient
 
     }
 
+    private View.OnClickListener validateCheckbox = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            CheckBox cb = (CheckBox)v;
+            if (cb.isChecked()){
+                if (v.getId() == R.id.stock_left_checkbox){
+                    stock.setEnabled(true);
+                }
+                if (v.getId() == R.id.brochure_left_checkbox){
+                    brochureQty.setEnabled(true);
+                }
+            }else{
+                if (v.getId() == R.id.stock_left_checkbox){
+                    stock.setEnabled(false);
+                }
+                if (v.getId() == R.id.brochure_left_checkbox){
+                    brochureQty.setEnabled(false);
+                }
+            }
+        }
+    };
+
     private View.OnClickListener reportInterview = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -90,17 +123,44 @@ public class AgencyReportActivity extends AppManager implements  GoogleApiClient
             dateHour = sdf.format(date);
             name = interviewerName.getText().toString();
             stockQty = stock.getText().toString();
+            if (TextUtils.isEmpty(stockQty)){
+                stockQty = "0";
+            }
             brochures = brochureQty.getText().toString();
+            if (TextUtils.isEmpty(brochures)){
+                brochures = "0";
+            }
             commentsText = comments.getText().toString();
+            if (TextUtils.isEmpty(commentsText)){
+                commentsText = " ";
+            }
             lat = latitude;
             lng = longitude;
-            if (isNetworkConnected()){
-                mReportTask = new SendReport(visitId, loggedUserId, name, stockQty, brochures, commentsText, dateHour, lat, lng);
-                mReportTask.execute((Void) null);
+            if (TextUtils.isEmpty(name)) {
+                interviewerName.setError(getString(R.string.error_field_required));
+                cancel = true;
             }else{
-                VisitReport vr = VisitReport.makeInstance(visitId, loggedUserId, name, stockQty, brochures, commentsText, lat, lng);
-                vr.save();
-                Toast.makeText(getApplicationContext(), "No se detectó una conexión a Internet, este formulario se enviará automáticamente en cuanto estés conectado.", Toast.LENGTH_LONG).show();
+                if (stock.isEnabled() && TextUtils.isEmpty(stockQty)) {
+                    stock.setError(getString(R.string.error_field_required));
+                    cancel = true;
+                }else{
+                    if (brochureQty.isEnabled() && TextUtils.isEmpty(brochures)) {
+                        brochureQty.setError(getString(R.string.error_field_required));
+                        cancel = true;
+                    }else{
+                        cancel = false;
+                    }
+                }
+            }
+            if (!cancel){
+                if (isNetworkConnected()){
+                    mReportTask = new SendReport(visitId, loggedUserId, name, stockQty, brochures, commentsText, dateHour, lat, lng);
+                    mReportTask.execute((Void) null);
+                }else{
+                    VisitReport vr = new VisitReport(visitId, loggedUserId, name, stockQty, brochures, commentsText, lat, lng);
+                    vr.save();
+                    Toast.makeText(getApplicationContext(), "No se detectó una conexión a Internet, este formulario se enviará automáticamente en cuanto estés conectado.", Toast.LENGTH_LONG).show();
+                }
             }
         }
     };
@@ -111,26 +171,6 @@ public class AgencyReportActivity extends AppManager implements  GoogleApiClient
         return cm.getActiveNetworkInfo() != null;
     }
 
-    public class NetworkChangeReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            final ConnectivityManager connMgr = (ConnectivityManager) context
-                    .getSystemService(Context.CONNECTIVITY_SERVICE);
-
-            if (connMgr.getActiveNetworkInfo() != null){
-                List<VisitReport> vrpts = VisitReport.listAll(VisitReport.class);
-                if (vrpts.size()>0){
-                    VisitReport report = vrpts.get(0);
-                    mReportTask = new SendReport(report.getVisitId(), report.getLoggedUserId(), report.getInterviewerName(), report.getStock(), report.getBrochureQty(), report.getComments(), dateHour, report.getLatitude(), report.getLongitude());
-                    mReportTask.execute((Void) null);
-                    report.delete();
-                }
-                Log.e("Network", "Connected");
-            }else{
-                Log.e("Network", "Not Connected");
-            }
-        }
-    }
 
     public class SendReport extends AsyncTask<Void, Void, Boolean> {
         String reportResponse = "";
@@ -168,17 +208,25 @@ public class AgencyReportActivity extends AppManager implements  GoogleApiClient
             } catch (IOException e) {
                 success = false;
                 error = e.getMessage();
+            } catch (RuntimeException e){
+                success = false;
+                error = e.getMessage();
             }
-            return true;
+            return success;
         }
 
         @Override
         protected void onPostExecute(final Boolean success) {
             if (success) {
-                Toast.makeText(getApplicationContext(), reportResponse, Toast.LENGTH_LONG).show();
+                try{
+                    Toast.makeText(getApplicationContext(), reportResponse, Toast.LENGTH_LONG).show();
+                    VisitReport.deleteAll(VisitReport.class);
+                }catch (NullPointerException e){
+                    //Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();
+                    Log.e("THIS", "FAILED");
+                }
             } else {
                 Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();
-                Log.e("AAAAAAAAAA", error);
             }
         }
 
@@ -208,7 +256,6 @@ public class AgencyReportActivity extends AppManager implements  GoogleApiClient
         Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 
         if (location != null) {
-            //TODO How to send location parameters to webservice
             latitude = String.valueOf(location.getLatitude());  //Text.setText(String.valueOf(location.getLatitude()));
             longitude = String.valueOf(location.getLongitude()); //mLongitudeText.setText(String.valueOf(location.getLongitude()));
         }else{
