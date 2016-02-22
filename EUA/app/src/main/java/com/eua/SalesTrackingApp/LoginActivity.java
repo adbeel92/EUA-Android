@@ -288,7 +288,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 authenticated = true;
             } catch (IOException e) {
                 error = e.getMessage();
-                authenticated = true;
+                authenticated = false;
                 loggedUser = User.dummyUser();
                 obtainedId = loggedUser.getId();
             }

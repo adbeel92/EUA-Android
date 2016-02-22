@@ -14,7 +14,7 @@ public class User {
         User user = new User();
         user.setEmail("foo@example.com");
         user.setName("Default User");
-        user.setId("9");
+        user.setId("-4");
         return user;
     }
 

@@ -80,9 +80,11 @@ public class AgencyDetailActivity extends AppManager {
         SimpleDateFormat sdf2 = new SimpleDateFormat("dd/MM/yyyy");
         SimpleDateFormat sdf3 = new SimpleDateFormat("yyMMddHHmmssZ");
         try {
-            date = sdf3.parse(programmedDate);
+            date = sdf2.parse(programmedDate);
             programmedVisitDate.setText(sdf2.format(date));
-            if (date == new Date()){
+            Date today = new Date();
+//            today.setTime(0);
+            if (date.getDay() == today.getDay() && date.getMonth() == today.getMonth() && date.getYear() == today.getYear()){
                 programmedVisitDate.setTextColor(Color.BLUE);
                 programmedVisitDate.setOnClickListener(new View.OnClickListener() {
                     @Override

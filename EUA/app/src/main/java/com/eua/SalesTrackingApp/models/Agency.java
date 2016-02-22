@@ -24,8 +24,8 @@ public class Agency {
         if (dateReceived.equals("0")){
             return dateReceived;
         }else {
-            String dateFormatted = dateReceived.substring(6,17) + "-" + dateReceived.substring(20,23);
-            return  dateFormatted;
+//            String dateFormatted = dateReceived.substring(6,17) + "-" + dateReceived.substring(20,23);
+            return  dateReceived;
         }
     }
 
