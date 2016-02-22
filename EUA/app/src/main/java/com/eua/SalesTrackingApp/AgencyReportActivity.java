@@ -20,6 +20,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.eua.SalesTrackingApp.models.VisitReport;
@@ -64,6 +65,8 @@ public class AgencyReportActivity extends AppManager implements GoogleApiClient.
     private Context foreignContext;
     private NetworkChangeReceiver ncr = null;
     private Gson gson;
+    private Button reportButton;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +85,8 @@ public class AgencyReportActivity extends AppManager implements GoogleApiClient.
         brochureQty.setEnabled(false);
         stockCb.setOnClickListener(validateCheckbox);
         brochureCb.setOnClickListener(validateCheckbox);
-        Button reportButton = (Button)findViewById(R.id.report);
+        reportButton = (Button)findViewById(R.id.report);
+        progressBar = (ProgressBar)findViewById(R.id.progressBar);
         visitId = intent.getStringExtra("id");
         loggedUserId = UserSessionManager.getInstance(getApplicationContext()).getLoggedUserId();
         reportButton.setOnClickListener(reportInterview);;
@@ -176,6 +180,11 @@ public class AgencyReportActivity extends AppManager implements GoogleApiClient.
         foreignContext = context;
         mReportTask = new SendReport(visit, userId, intName, stock, broch, comments, dateTime, latitude, longitude);
         mReportTask.execute((Void) null);
+        reportButton.setVisibility(View.INVISIBLE);
+        progressBar.setVisibility(View.VISIBLE);
+        progressBar.animate();
+//        reportButton.setText("");
+//        reportButton.setEnabled(true);
     }
 
     private boolean isNetworkConnected() {
@@ -214,6 +223,15 @@ public class AgencyReportActivity extends AppManager implements GoogleApiClient.
             // TODO: attempt authentication against a network service.
 
             final Call<ReportResponse> call = apiService.sendReport(visitId, loggedUserId, interviewerName, stockQty, brochureQty, commentsText, date, lat, lng);
+//            Log.e("visitId", visitId);
+//            Log.e("loggedUserId", loggedUserId);
+//            Log.e("interviewerName", interviewerName);
+//            Log.e("stockQty", stockQty);
+//            Log.e("brochureQty", brochureQty);
+//            Log.e("commentsText", commentsText);
+//            Log.e("date", date);
+//            Log.e("lat", lat);
+//            Log.e("lng", lng);
             try {
                 Response<ReportResponse> response = call.execute();
                 reportResponse = response.body().Visita_VisitaAppsGuardaActualizaResult;
@@ -230,6 +248,11 @@ public class AgencyReportActivity extends AppManager implements GoogleApiClient.
 
         @Override
         protected void onPostExecute(final Boolean success) {
+            progressBar.clearAnimation();
+            progressBar.setVisibility(View.INVISIBLE);
+//            reportButton.setText("Report");
+//            reportButton.setEnabled(true);
+            reportButton.setVisibility(View.VISIBLE);
             try{
                 context = getApplicationContext();
             }catch (NullPointerException e){
