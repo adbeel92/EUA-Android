@@ -129,7 +129,7 @@ public class AgencyReportActivity extends AppManager implements GoogleApiClient.
         @Override
         public void onClick(View v) {
             Date date = new Date();
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
             dateHour = sdf.format(date);
             name = interviewerName.getText().toString();
             stockQty = stock.getText().toString();
