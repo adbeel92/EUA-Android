@@ -7,8 +7,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.provider.SyncStateContract;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -39,7 +43,7 @@ import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
 
-public class AgencyReportActivity extends AppManager implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class AgencyReportActivity extends AppManager implements LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, InfoDialogFragment.OnFragmentInteractionListener {
 
     private GoogleApiClient mGoogleApiClient;
     private String visitId;
@@ -60,6 +64,8 @@ public class AgencyReportActivity extends AppManager implements GoogleApiClient.
     private String commentsText;
     private String lat;
     private String lng;
+    private String changedLat;
+    private String changedLng;
     private Boolean cancel;
     private Context context;
     private Context foreignContext;
@@ -67,6 +73,8 @@ public class AgencyReportActivity extends AppManager implements GoogleApiClient.
     private Gson gson;
     private Button reportButton;
     private ProgressBar progressBar;
+    private InfoDialogFragment infoDialog;
+    private LocationManager locationManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,8 +84,8 @@ public class AgencyReportActivity extends AppManager implements GoogleApiClient.
         setTitle(intent.getStringExtra("title"));
         getSupportActionBar().setHomeButtonEnabled(true);
         interviewerName = (EditText) findViewById(R.id.interviewer_name);
-        brochureQty = (EditText)findViewById(R.id.brochure_quantity);
-        stock = (EditText)findViewById(R.id.stock_quantity);
+        brochureQty = (EditText) findViewById(R.id.brochure_quantity);
+        stock = (EditText) findViewById(R.id.stock_quantity);
         comments = (EditText) findViewById(R.id.comments_edit_view);
         CheckBox stockCb = (CheckBox) findViewById(R.id.stock_left_checkbox);
         CheckBox brochureCb = (CheckBox) findViewById(R.id.brochure_left_checkbox);
@@ -85,11 +93,12 @@ public class AgencyReportActivity extends AppManager implements GoogleApiClient.
         brochureQty.setEnabled(false);
         stockCb.setOnClickListener(validateCheckbox);
         brochureCb.setOnClickListener(validateCheckbox);
-        reportButton = (Button)findViewById(R.id.report);
-        progressBar = (ProgressBar)findViewById(R.id.progressBar);
+        reportButton = (Button) findViewById(R.id.report);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
         visitId = intent.getStringExtra("id");
         loggedUserId = UserSessionManager.getInstance(getApplicationContext()).getLoggedUserId();
-        reportButton.setOnClickListener(reportInterview);;
+        reportButton.setOnClickListener(reportInterview);
+        ;
         // Create an instance of GoogleAPIClient.
         if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -98,7 +107,11 @@ public class AgencyReportActivity extends AppManager implements GoogleApiClient.
                     .addApi(LocationServices.API)
                     .build();
         }
-
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 5, this);
     }
 
 
@@ -158,7 +171,12 @@ public class AgencyReportActivity extends AppManager implements GoogleApiClient.
                         brochureQty.setError(getString(R.string.error_field_required));
                         cancel = true;
                     }else{
-                        cancel = false;
+                        if (lat==null || lng==null){
+                            cancel = true;
+                            Toast.makeText(getApplicationContext(), "Tu ubicación actual no está disponible. Inténtalo más tarde", Toast.LENGTH_LONG).show();
+                        }else{
+                            cancel = false;
+                        }
                     }
                 }
             }
@@ -183,14 +201,40 @@ public class AgencyReportActivity extends AppManager implements GoogleApiClient.
         reportButton.setVisibility(View.INVISIBLE);
         progressBar.setVisibility(View.VISIBLE);
         progressBar.animate();
+        infoDialog = InfoDialogFragment.newInstance(visit, userId, intName, stock, broch, comments, dateTime, latitude, longitude);
 //        reportButton.setText("");
 //        reportButton.setEnabled(true);
     }
 
     private boolean isNetworkConnected() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-
         return cm.getActiveNetworkInfo() != null;
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        changedLat = String.valueOf(location.getLatitude());
+        changedLng = String.valueOf(location.getLongitude());
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
     }
 
 
@@ -263,14 +307,15 @@ public class AgencyReportActivity extends AppManager implements GoogleApiClient.
                 try{
                     Toast.makeText(context, reportResponse, Toast.LENGTH_LONG).show();
                     VisitReport.deleteAll(VisitReport.class);
-                    finish();
+                    //finish();
                 }catch (NullPointerException e){
                     Toast.makeText(context, error, Toast.LENGTH_LONG).show();
                 }
             } else {
                 Toast.makeText(context, error, Toast.LENGTH_LONG).show();
             }
-            finish();
+            infoDialog.show(getFragmentManager(), "info");
+            //finish();
         }
 
         @Override
@@ -298,11 +343,13 @@ public class AgencyReportActivity extends AppManager implements GoogleApiClient.
         }
         Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 
+
         if (location != null) {
             latitude = String.valueOf(location.getLatitude());  //Text.setText(String.valueOf(location.getLatitude()));
             longitude = String.valueOf(location.getLongitude()); //mLongitudeText.setText(String.valueOf(location.getLongitude()));
         }else{
-            Log.e("GPSing", "null location");
+            latitude = changedLat;
+            longitude = changedLng;
         }
 
     }
