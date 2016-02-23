@@ -116,7 +116,7 @@ public class AgencyReportActivity extends AppManager implements LocationListener
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
-
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 500, 3, this);
     }
 
 
@@ -221,6 +221,17 @@ public class AgencyReportActivity extends AppManager implements LocationListener
     public void onLocationChanged(Location location) {
         changedLat = String.valueOf(location.getLatitude());
         changedLng = String.valueOf(location.getLongitude());
+        if (changedLat!=null && changedLng!=null){
+            try {
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    return;
+                }
+                locationManager.removeUpdates(this); locationManager=null;
+            } catch(Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
