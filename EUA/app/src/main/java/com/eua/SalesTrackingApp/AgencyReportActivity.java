@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
@@ -40,7 +41,7 @@ import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
 
-public class AgencyReportActivity extends AppManager implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class AgencyReportActivity extends AppManager implements LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private GoogleApiClient mGoogleApiClient;
     private String visitId;
@@ -70,6 +71,9 @@ public class AgencyReportActivity extends AppManager implements GoogleApiClient.
     private ProgressBar progressBar;
     private boolean gpsenabled = false;
     private InfoDialog infoDialog;
+    private LocationManager locationManager;
+    private String changedLat;
+    private String changedLng;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,12 +106,15 @@ public class AgencyReportActivity extends AppManager implements GoogleApiClient.
                     .build();
         }
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER )){
             gpsenabled = true;
         }
         if (!gpsenabled){
             GpsStatusDialog gpsStatusDialog = GpsStatusDialog.newInstance();
             gpsStatusDialog.show(getFragmentManager(), "gpsDialog");
+        }
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
         }
 
     }
@@ -210,6 +217,27 @@ public class AgencyReportActivity extends AppManager implements GoogleApiClient.
         return cm.getActiveNetworkInfo() != null;
     }
 
+    @Override
+    public void onLocationChanged(Location location) {
+        changedLat = String.valueOf(location.getLatitude());
+        changedLng = String.valueOf(location.getLongitude());
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
+    }
+
 
     public class SendReport extends AsyncTask<Void, Void, Boolean> {
         String reportResponse = "";
@@ -280,8 +308,7 @@ public class AgencyReportActivity extends AppManager implements GoogleApiClient.
                 try{
                     Toast.makeText(context, reportResponse, Toast.LENGTH_LONG).show();
                     VisitReport.deleteAll(VisitReport.class);
-                    infoDialog.show(getFragmentManager(), "infoDialog");
-                    //finish();
+                    finish();
                 }catch (NullPointerException e){
                     Toast.makeText(context, error, Toast.LENGTH_LONG).show();
                 }
@@ -320,7 +347,8 @@ public class AgencyReportActivity extends AppManager implements GoogleApiClient.
             latitude = String.valueOf(location.getLatitude());  //Text.setText(String.valueOf(location.getLatitude()));
             longitude = String.valueOf(location.getLongitude()); //mLongitudeText.setText(String.valueOf(location.getLongitude()));
         }else{
-            Log.e("GPSing", "null location");
+            latitude = changedLat;
+            longitude = changedLng;
         }
 
     }
