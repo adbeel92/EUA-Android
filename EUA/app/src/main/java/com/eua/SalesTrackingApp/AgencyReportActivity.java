@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.support.v4.app.ActivityCompat;
@@ -48,8 +49,8 @@ public class AgencyReportActivity extends AppManager implements GoogleApiClient.
     private EditText stock;
     private EditText brochureQty;
     private EditText comments;
-    private String latitude = "";
-    private String longitude = "";
+    private String latitude;
+    private String longitude;
     private String error = "Unknown error";
     private Boolean success;
     private SendReport mReportTask = null;
@@ -67,6 +68,8 @@ public class AgencyReportActivity extends AppManager implements GoogleApiClient.
     private Gson gson;
     private Button reportButton;
     private ProgressBar progressBar;
+    private boolean gpsenabled = false;
+    private InfoDialog infoDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +100,14 @@ public class AgencyReportActivity extends AppManager implements GoogleApiClient.
                     .addOnConnectionFailedListener(this)
                     .addApi(LocationServices.API)
                     .build();
+        }
+        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+            gpsenabled = true;
+        }
+        if (!gpsenabled){
+            GpsStatusDialog gpsStatusDialog = GpsStatusDialog.newInstance();
+            gpsStatusDialog.show(getFragmentManager(), "gpsDialog");
         }
 
     }
@@ -158,7 +169,12 @@ public class AgencyReportActivity extends AppManager implements GoogleApiClient.
                         brochureQty.setError(getString(R.string.error_field_required));
                         cancel = true;
                     }else{
-                        cancel = false;
+                        if (lat==null || lng==null){
+                            cancel = true;
+                            Toast.makeText(getApplicationContext(), "Error del sistema al obtener su ubicación. Intente luego.", Toast.LENGTH_LONG).show();
+                        }else{
+                            cancel = false;
+                        }
                     }
                 }
             }
@@ -177,6 +193,7 @@ public class AgencyReportActivity extends AppManager implements GoogleApiClient.
     };
 
     public void makeRequest(Context context,String visit, String userId, String intName, String stock, String broch, String comments, String dateTime, String latitude, String longitude){
+        infoDialog = InfoDialog.newInstance(visit, userId, intName, stock, broch, comments, dateTime, latitude, longitude);
         foreignContext = context;
         mReportTask = new SendReport(visit, userId, intName, stock, broch, comments, dateTime, latitude, longitude);
         mReportTask.execute((Void) null);
@@ -263,14 +280,15 @@ public class AgencyReportActivity extends AppManager implements GoogleApiClient.
                 try{
                     Toast.makeText(context, reportResponse, Toast.LENGTH_LONG).show();
                     VisitReport.deleteAll(VisitReport.class);
-                    finish();
+                    infoDialog.show(getFragmentManager(), "infoDialog");
+                    //finish();
                 }catch (NullPointerException e){
                     Toast.makeText(context, error, Toast.LENGTH_LONG).show();
                 }
             } else {
                 Toast.makeText(context, error, Toast.LENGTH_LONG).show();
             }
-            finish();
+            //finish();
         }
 
         @Override

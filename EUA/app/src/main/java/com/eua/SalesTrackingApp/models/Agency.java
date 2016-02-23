@@ -19,6 +19,16 @@ public class Agency {
     private String AgenciaCredito = "";
     private String agenciaFechaProgramada = "";
 
+    public String getAgenciaVisitasID() {
+        return agenciaVisitasID;
+    }
+
+    public void setAgenciaVisitasID(String agenciaVisitasID) {
+        this.agenciaVisitasID = agenciaVisitasID;
+    }
+
+    private String agenciaVisitasID = "";
+
     public String  getAgenciaFechaProgramada() {
         String dateReceived = agenciaFechaProgramada;
         if (dateReceived.equals("0")){

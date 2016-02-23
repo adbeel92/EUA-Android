@@ -92,7 +92,7 @@ public class AgencyDetailActivity extends AppManager {
                         // TODO Auto-generated method stub
                         Intent intent = new Intent(v.getContext(), AgencyReportActivity.class);
                         intent.putExtra("title", agency.getAgenciaNombre());
-                        intent.putExtra("id", agency.getAgenciaID());
+                        intent.putExtra("id", agency.getAgenciaVisitasID());
                         v.getContext().startActivity(intent);
                     }
                 });
