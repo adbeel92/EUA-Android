@@ -68,7 +68,9 @@ public class AgencyReportActivity extends AppManager implements LocationListener
     private NetworkChangeReceiver ncr = null;
     private Gson gson;
     private Button reportButton;
+    private Button reportButtonTop;
     private ProgressBar progressBar;
+    private ProgressBar progressBarTop;
     private boolean gpsenabled = false;
     private InfoDialog infoDialog;
     private LocationManager locationManager;
@@ -93,10 +95,13 @@ public class AgencyReportActivity extends AppManager implements LocationListener
         stockCb.setOnClickListener(validateCheckbox);
         brochureCb.setOnClickListener(validateCheckbox);
         reportButton = (Button)findViewById(R.id.report);
+        reportButtonTop = (Button)findViewById(R.id.reportTop);
         progressBar = (ProgressBar)findViewById(R.id.progressBar);
+        progressBarTop = (ProgressBar)findViewById(R.id.progressBarTop);
         visitId = intent.getStringExtra("id");
         loggedUserId = UserSessionManager.getInstance(getApplicationContext()).getLoggedUserId();
-        reportButton.setOnClickListener(reportInterview);;
+        reportButton.setOnClickListener(reportInterview);
+        reportButtonTop.setOnClickListener(reportInterview);
         // Create an instance of GoogleAPIClient.
         if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -205,8 +210,11 @@ public class AgencyReportActivity extends AppManager implements LocationListener
         mReportTask = new SendReport(visit, userId, intName, stock, broch, comments, dateTime, latitude, longitude);
         mReportTask.execute((Void) null);
         reportButton.setVisibility(View.INVISIBLE);
+        reportButtonTop.setVisibility(View.INVISIBLE);
         progressBar.setVisibility(View.VISIBLE);
+        progressBarTop.setVisibility(View.VISIBLE);
         progressBar.animate();
+        progressBarTop.animate();
 //        reportButton.setText("");
 //        reportButton.setEnabled(true);
     }
@@ -305,10 +313,13 @@ public class AgencyReportActivity extends AppManager implements LocationListener
         @Override
         protected void onPostExecute(final Boolean success) {
             progressBar.clearAnimation();
+            progressBarTop.clearAnimation();
             progressBar.setVisibility(View.INVISIBLE);
+            progressBarTop.setVisibility(View.INVISIBLE);
 //            reportButton.setText("Report");
 //            reportButton.setEnabled(true);
             reportButton.setVisibility(View.VISIBLE);
+            reportButtonTop.setVisibility(View.VISIBLE);
             try{
                 context = getApplicationContext();
             }catch (NullPointerException e){
@@ -317,7 +328,7 @@ public class AgencyReportActivity extends AppManager implements LocationListener
             mReportTask = null;
             if (success) {
                 try{
-                    Toast.makeText(context, reportResponse, Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, "La visita programada se realizó exitosamente.", Toast.LENGTH_LONG).show();
                     VisitReport.deleteAll(VisitReport.class);
                     finish();
                 }catch (NullPointerException e){
