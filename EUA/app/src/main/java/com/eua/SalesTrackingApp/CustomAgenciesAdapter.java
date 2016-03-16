@@ -22,13 +22,14 @@ import java.util.ArrayList;
  * Created by rubymobile on 2/4/16.
  */
 public class CustomAgenciesAdapter extends BaseAdapter {
+    AgenciesActivity agenciesActivity;
     ArrayList<Agency> agenciesList;
     Class nextActivity;
     Boolean numeration;
     Gson gson = new Gson();
 
-    public CustomAgenciesAdapter(Class activityClass, ArrayList<Agency> agencies, boolean num) {
-        // TODO Auto-generated constructor stub
+    public CustomAgenciesAdapter(AgenciesActivity agenciesActivity, Class activityClass, ArrayList<Agency> agencies, boolean num) {
+        this.agenciesActivity = agenciesActivity;
         agenciesList=agencies;
         nextActivity =activityClass;
         numeration=num;
@@ -77,9 +78,12 @@ public class CustomAgenciesAdapter extends BaseAdapter {
                 String serializedAgency = gson.toJson(agenciesList.get(position));
                 Intent intent = new Intent(v.getContext(), nextActivity);
                 intent.putExtra("agency", serializedAgency);
-                v.getContext().startActivity(intent);
+                intent.putExtra("position", position);
+                agenciesActivity.startActivityForResult(intent, 2);
             }
         });
         return rowView;
     }
+
+
 }

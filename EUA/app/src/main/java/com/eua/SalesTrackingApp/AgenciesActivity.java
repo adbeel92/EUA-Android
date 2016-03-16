@@ -1,5 +1,6 @@
 package com.eua.SalesTrackingApp;
 
+import android.app.Activity;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Intent;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.eua.SalesTrackingApp.models.Agency;
+import com.eua.SalesTrackingApp.models.AgencyVisit;
 import com.eua.SalesTrackingApp.models.User;
 
 import java.io.IOException;
@@ -31,6 +33,7 @@ import retrofit.Response;
 import retrofit.Retrofit;
 
 public class AgenciesActivity extends AppManager {
+    private AgenciesActivity agenciesActivity;
     private ArrayList<Agency> agenciesList;
     private ListView generalAgencies;
     private String error = "nothing";
@@ -45,6 +48,7 @@ public class AgenciesActivity extends AppManager {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        agenciesActivity = this;
         setTitle("Agencias");
         getSupportActionBar().setHomeButtonEnabled(true);
         setContentView(R.layout.activity_agencies);
@@ -58,7 +62,17 @@ public class AgenciesActivity extends AppManager {
         showProgress(true);
     }
 
-
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 2) {
+            if(resultCode == Activity.RESULT_OK){
+                Integer position = data.getIntExtra("position", -1);
+                Log.d("position -> ", position.toString());
+//                AgencyVisit agencyVisit = visitsList.get(position);
+//                agencyVisit.setVisitasIDVisitado("1");
+            }
+        }
+    }
 
     public class GetAgenciesTask extends AsyncTask<Void, Void, Boolean> {
         final Context context = getApplicationContext();
@@ -90,7 +104,7 @@ public class AgenciesActivity extends AppManager {
                     mEmtpyText.setText("No hay agencias");
                     mEmtpyText.setVisibility(View.VISIBLE);
                 }else{
-                    generalAgencies.setAdapter(new CustomAgenciesAdapter(AgencyDetailActivity.class, agenciesList, false));
+                    generalAgencies.setAdapter(new CustomAgenciesAdapter(agenciesActivity, AgencyDetailActivity.class, agenciesList, false));
                 }
             } else{
                 Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();
