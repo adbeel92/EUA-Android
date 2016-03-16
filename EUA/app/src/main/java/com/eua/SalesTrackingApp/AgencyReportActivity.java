@@ -153,6 +153,10 @@ public class AgencyReportActivity extends AppManager implements LocationListener
     private View.OnClickListener reportInterview = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+//            Intent returnIntent = new Intent();
+//            returnIntent.putExtra("position", position);
+//            setResult(Activity.RESULT_OK, returnIntent);
+//            finish();
             Date date = new Date();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
             dateHour = sdf.format(date);

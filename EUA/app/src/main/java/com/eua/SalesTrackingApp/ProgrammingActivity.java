@@ -80,6 +80,8 @@ public class ProgrammingActivity extends AppManager {
                 Integer position = data.getIntExtra("position", -1);
                 AgencyVisit agencyVisit = visitsList.get(position);
                 agencyVisit.setVisitasIDVisitado("1");
+                CustomAgenciesVisitAdapter adapter = (CustomAgenciesVisitAdapter) programmedAgencies.getAdapter();
+                adapter.notifyDataSetChanged();
             }
         }
     }
