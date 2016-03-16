@@ -57,14 +57,20 @@ public class ProgrammingActivity extends AppManager {
         programmedAgencies = (ListView)findViewById(R.id.programmedAgencies);
         promotorId = usm.getLoggedUserId();
         SimpleDateFormat sdf = new SimpleDateFormat("EEEE dd/MM/yyyy");
-        SimpleDateFormat sdf2 = new SimpleDateFormat("MM/dd/yyyy");
-        SimpleDateFormat sdf3 = new SimpleDateFormat("yyMMddHHmmssZ");
         String dayOfTheWeek = sdf.format(date);
         today.setText(dayOfTheWeek.substring(0, 1).toUpperCase() + dayOfTheWeek.substring(1));
         mProgressView = findViewById(R.id.login_progress);
         mEmtpyText = (TextView) findViewById(R.id.emptyResultsText);
         mEmtpyText.setVisibility(View.INVISIBLE);
         promotorId = UserSessionManager.getInstance(getApplicationContext()).getLoggedUserId();
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        visitsList = new ArrayList<>();
+        SimpleDateFormat sdf2 = new SimpleDateFormat("MM/dd/yyyy");
         visitsTask = new GetVisitsTask(sdf2.format(date), sdf2.format(date));
         visitsTask.execute((Void) null);
         showProgress(true);

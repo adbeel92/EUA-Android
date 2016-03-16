@@ -28,7 +28,7 @@
         android:layout_below="@+id/nameTag"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="33dp" />
+        android:layout_marginTop="30dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -36,12 +36,10 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="RUC.:"
         android:id="@+id/legalIdTag"
-        android:layout_above="@+id/phoneTag"
+        android:layout_below="@+id/addressTag"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginBottom="37dp"
-        android:layout_alignRight="@+id/emailTag"
-        android:layout_alignEnd="@+id/emailTag" />
+        android:layout_marginTop="30dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -49,10 +47,10 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Teléfono:"
         android:id="@+id/phoneTag"
-        android:layout_above="@+id/emailTag"
+        android:layout_below="@+id/legalIdTag"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginBottom="34dp" />
+        android:layout_marginTop="30dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -60,9 +58,10 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="E-Mail:"
         android:id="@+id/emailTag"
-        android:layout_centerVertical="true"
+        android:layout_below="@id/phoneTag"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="30dp" />
 
     <TextView
         android:layout_width="wrap_content"

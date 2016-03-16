@@ -4,6 +4,9 @@ package com.eua.SalesTrackingApp.models;
  * Created by rubymobile on 16/02/16.
  */
 public class AgencyVisit {
+
+    private String visitasIDVisitado;
+
     private String visitasAgenciaId;
 
     private String visitasAgenciaNombre;
@@ -33,6 +36,7 @@ public class AgencyVisit {
     public String getVisitasId(){
         return this.visitasId;
     }
+
     private static AgencyVisit ourInstance = new AgencyVisit();
 
     public static AgencyVisit getInstance() {
@@ -40,5 +44,13 @@ public class AgencyVisit {
     }
 
     private AgencyVisit() {
+    }
+
+    public String getVisitasIDVisitado() {
+        return visitasIDVisitado;
+    }
+
+    public void setVisitasIDVisitado(String visitado) {
+        this.visitasIDVisitado = visitado;
     }
 }

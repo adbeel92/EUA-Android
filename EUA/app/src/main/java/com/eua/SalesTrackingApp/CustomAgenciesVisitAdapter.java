@@ -1,12 +1,15 @@
 package com.eua.SalesTrackingApp;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.eua.SalesTrackingApp.models.AgencyVisit;
 
@@ -49,9 +52,9 @@ public class CustomAgenciesVisitAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(final int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, final ViewGroup parent) {
         Holder holder=new Holder();
-        View rowView;
+        final View rowView;
         rowView = LayoutInflater.from(parent.getContext()).inflate(R.layout.agency_list, parent, false);
         if (numeration){
             holder.index=(TextView) rowView.findViewById(R.id.agencyIndex);
@@ -67,11 +70,15 @@ public class CustomAgenciesVisitAdapter extends BaseAdapter {
         rowView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
-                Intent intent = new Intent(v.getContext(), nextActivity);
-                intent.putExtra("title", agenciesList.get(position).getVisitasAgenciaNombre());
-                intent.putExtra("id", agenciesList.get(position).getVisitasId());
-                v.getContext().startActivity(intent);
+                if (agenciesList.get(position).getVisitasIDVisitado() == "0") {
+                    // TODO Auto-generated method stub
+                    Intent intent = new Intent(v.getContext(), nextActivity);
+                    intent.putExtra("title", agenciesList.get(position).getVisitasAgenciaNombre());
+                    intent.putExtra("id", agenciesList.get(position).getVisitasId());
+                    v.getContext().startActivity(intent);
+                } else {
+                   Toast.makeText(parent.getContext(), "Esta agencia ha sido visitada anteriormente.", Toast.LENGTH_SHORT).show();
+                }
             }
         });
         return rowView;

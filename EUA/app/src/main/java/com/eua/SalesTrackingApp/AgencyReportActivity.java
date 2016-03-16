@@ -330,6 +330,7 @@ public class AgencyReportActivity extends AppManager implements LocationListener
                 try{
                     Toast.makeText(context, "La visita programada se realizó exitosamente.", Toast.LENGTH_LONG).show();
                     VisitReport.deleteAll(VisitReport.class);
+
                     finish();
                 }catch (NullPointerException e){
                     Toast.makeText(context, error, Toast.LENGTH_LONG).show();

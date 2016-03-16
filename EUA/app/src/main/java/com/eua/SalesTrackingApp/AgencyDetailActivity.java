@@ -89,11 +89,15 @@ public class AgencyDetailActivity extends AppManager {
                 programmedVisitDate.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        // TODO Auto-generated method stub
-                        Intent intent = new Intent(v.getContext(), AgencyReportActivity.class);
-                        intent.putExtra("title", agency.getAgenciaNombre());
-                        intent.putExtra("id", agency.getAgenciaVisitasID());
-                        v.getContext().startActivity(intent);
+                        if (agency.getAgenciavisitasIDVisitado() == "0") {
+                            // TODO Auto-generated method stub
+                            Intent intent = new Intent(v.getContext(), AgencyReportActivity.class);
+                            intent.putExtra("title", agency.getAgenciaNombre());
+                            intent.putExtra("id", agency.getAgenciaVisitasID());
+                            v.getContext().startActivity(intent);
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Esta agencia ha sido visitada anteriormente.", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
             }

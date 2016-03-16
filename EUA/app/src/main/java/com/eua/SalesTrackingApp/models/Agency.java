@@ -18,6 +18,7 @@ public class Agency {
     private String AgenciaComision = "";
     private String AgenciaCredito = "";
     private String agenciaFechaProgramada = "";
+    private String agenciavisitasIDVisitado = "";
 
     public String getAgenciaVisitasID() {
         return agenciaVisitasID;
@@ -108,4 +109,11 @@ public class Agency {
     }
 
 
+    public String getAgenciavisitasIDVisitado() {
+        return agenciavisitasIDVisitado;
+    }
+
+    public void setAgenciavisitasIDVisitado(String agenciavisitasIDVisitado) {
+        this.agenciavisitasIDVisitado = agenciavisitasIDVisitado;
+    }
 }
