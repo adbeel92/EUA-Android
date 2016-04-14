@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -73,8 +75,14 @@ public class AgencyDetailActivity extends AppManager {
         agencyName.setText(agencyName.getText().toString() + " " + agency.getAgenciaNombre());
         agencyAddress.setText(agencyAddress.getText().toString() + " " + agency.getAgenciaDireccion());
         agencyLegalId.setText(agencyLegalId.getText().toString() + " " + agency.getAgenciaRUC());
-        agencyPhone.setText(agencyPhone.getText().toString() + " " + agency.getAgenciaTelefono());
-        agencyEmail.setText(agencyEmail.getText().toString() + " " + agency.getAgenciaEmail());
+        String phoneText = "";
+        if (agency.getAgenciaTelefono().length() <= 7) {
+            phoneText = "01" + agency.getAgenciaTelefono();
+        } else {
+            phoneText = agency.getAgenciaTelefono();
+        }
+        agencyPhone.setText(phoneText);
+        agencyEmail.setText(agency.getAgenciaEmail());
         agencyComision.setText(agencyComision.getText().toString() + " " + agency.getAgenciaComision());
         agencyCredit.setText(agencyCredit.getText().toString() + " " + agency.getAgenciaCredito());
         SimpleDateFormat sdf2 = new SimpleDateFormat("dd/MM/yyyy");
