@@ -1,11 +1,11 @@
 package com.eua.SalesTrackingApp;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Html;
-import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,6 +29,8 @@ import retrofit.Response;
 import retrofit.Retrofit;
 
 public class AgencyDetailActivity extends AppManager {
+    private AgencyDetailActivity agencyDetailActivity;
+    private Integer position;
     private TextView agencyName;
     private TextView agencyAddress;
     private TextView agencyLegalId;
@@ -52,9 +54,11 @@ public class AgencyDetailActivity extends AppManager {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        agencyDetailActivity = this;
         setContentView(R.layout.activity_agency_detail);
         Intent intent = getIntent();
         setTitle(gson.fromJson(intent.getStringExtra("agency"), Agency.class).getAgenciaNombre());
+        this.position = Integer.valueOf(intent.getIntExtra("position", -1));
         programmedDate = gson.fromJson(intent.getStringExtra("agency"), Agency.class).getAgenciaFechaProgramada();
         agencyId = intent.getStringExtra("id");
         agencyName = (TextView) findViewById(R.id.nameTag);
@@ -69,6 +73,17 @@ public class AgencyDetailActivity extends AppManager {
         getSupportActionBar().setHomeButtonEnabled(true);
         agency = gson.fromJson(intent.getStringExtra("agency"), Agency.class);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
         setValues(agency);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 1) {
+            if(resultCode == Activity.RESULT_OK){
+                Integer position = data.getIntExtra("position", -1);
+                Log.d("position -> ", position.toString());
+                agency.setAgenciavisitasIDVisitado("1");
+            }
+        }
     }
 
     private void setValues(final Agency agency){
@@ -97,15 +112,16 @@ public class AgencyDetailActivity extends AppManager {
                 programmedVisitDate.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (agency.getAgenciavisitasIDVisitado() == "0") {
+//                        if (agency.getAgenciavisitasIDVisitado().equals("0")) {
                             // TODO Auto-generated method stub
                             Intent intent = new Intent(v.getContext(), AgencyReportActivity.class);
+                            intent.putExtra("position", position);
                             intent.putExtra("title", agency.getAgenciaNombre());
                             intent.putExtra("id", agency.getAgenciaVisitasID());
-                            v.getContext().startActivity(intent);
-                        } else {
-                            Toast.makeText(getApplicationContext(), "Esta agencia ha sido visitada anteriormente.", Toast.LENGTH_SHORT).show();
-                        }
+                            agencyDetailActivity.startActivityForResult(intent, 1);
+//                        } else {
+//                            Toast.makeText(getApplicationContext(), "Esta agencia ha sido visitada anteriormente.", Toast.LENGTH_SHORT).show();
+//                        }
                     }
                 });
             }

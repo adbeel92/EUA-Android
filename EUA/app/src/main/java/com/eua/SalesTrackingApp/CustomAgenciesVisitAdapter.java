@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,14 +21,16 @@ import java.util.List;
  * Created by unobtainium on 19/02/16.
  */
 public class CustomAgenciesVisitAdapter extends BaseAdapter {
+    ProgrammingActivity parentActivity;
     List<AgencyVisit> agenciesList;
     Class nextActivity;
     Boolean numeration;
 
-    public CustomAgenciesVisitAdapter(Class activityClass, List<AgencyVisit> agencies, boolean num) {
+    public CustomAgenciesVisitAdapter(ProgrammingActivity parentActivity, Class activityClass, List<AgencyVisit> agencies, boolean num) {
         // TODO Auto-generated constructor stub
+        this.parentActivity = parentActivity;
         agenciesList=agencies;
-        nextActivity =activityClass;
+        nextActivity = activityClass;
         numeration=num;
     }
 
@@ -67,18 +70,23 @@ public class CustomAgenciesVisitAdapter extends BaseAdapter {
         }
         holder.text=(TextView) rowView.findViewById(R.id.agencyName);
         holder.text.setText(agenciesList.get(position).getVisitasAgenciaNombre());
+        if (!agenciesList.get(position).getVisitasIDVisitado().equals("0")) {
+            ImageView imageView = (ImageView) rowView.findViewById(R.id.visitedIcon);
+            imageView.setVisibility(View.VISIBLE);
+        }
         rowView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (agenciesList.get(position).getVisitasIDVisitado() == "0") {
-                    // TODO Auto-generated method stub
-                    Intent intent = new Intent(v.getContext(), nextActivity);
-                    intent.putExtra("title", agenciesList.get(position).getVisitasAgenciaNombre());
-                    intent.putExtra("id", agenciesList.get(position).getVisitasId());
-                    v.getContext().startActivity(intent);
-                } else {
-                   Toast.makeText(parent.getContext(), "Esta agencia ha sido visitada anteriormente.", Toast.LENGTH_SHORT).show();
-                }
+//                if (agenciesList.get(position).getVisitasIDVisitado().equals("0")) {
+                // TODO Auto-generated method stub
+                Intent intent = new Intent(v.getContext(), nextActivity);
+                intent.putExtra("position", position);
+                intent.putExtra("title", agenciesList.get(position).getVisitasAgenciaNombre());
+                intent.putExtra("id", agenciesList.get(position).getVisitasId());
+                parentActivity.startActivityForResult(intent, 1);
+//                } else {
+//                   Toast.makeText(parent.getContext(), "Esta agencia ha sido visitada anteriormente.", Toast.LENGTH_SHORT).show();
+//                }
             }
         });
         return rowView;

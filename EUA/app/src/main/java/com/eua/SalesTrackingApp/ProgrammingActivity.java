@@ -1,5 +1,6 @@
 package com.eua.SalesTrackingApp;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -44,11 +45,12 @@ public class ProgrammingActivity extends AppManager {
     boolean contains;
     private GetVisitsTask visitsTask;
     private Gson gson;
-
+    private ProgrammingActivity programmingActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        programmingActivity = this;
         setContentView(R.layout.activity_programming);
         getSupportActionBar().setHomeButtonEnabled(true);
         UserSessionManager usm = new UserSessionManager(getApplicationContext());
@@ -64,16 +66,24 @@ public class ProgrammingActivity extends AppManager {
         mEmtpyText.setVisibility(View.INVISIBLE);
         promotorId = UserSessionManager.getInstance(getApplicationContext()).getLoggedUserId();
 
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
         visitsList = new ArrayList<>();
         SimpleDateFormat sdf2 = new SimpleDateFormat("MM/dd/yyyy");
         visitsTask = new GetVisitsTask(sdf2.format(date), sdf2.format(date));
         visitsTask.execute((Void) null);
         showProgress(true);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 1) {
+            if(resultCode == Activity.RESULT_OK){
+                Integer position = data.getIntExtra("position", -1);
+                AgencyVisit agencyVisit = visitsList.get(position);
+                agencyVisit.setVisitasIDVisitado("1");
+                CustomAgenciesVisitAdapter adapter = (CustomAgenciesVisitAdapter) programmedAgencies.getAdapter();
+                adapter.notifyDataSetChanged();
+            }
+        }
     }
 
     public class GetVisitsTask extends AsyncTask<Void, Void, Boolean> {
@@ -110,7 +120,7 @@ public class ProgrammingActivity extends AppManager {
                     mEmtpyText.setText("No hay agencias");
                     mEmtpyText.setVisibility(View.VISIBLE);
                 }else{
-                    programmedAgencies.setAdapter(new CustomAgenciesVisitAdapter(AgencyReportActivity.class, visitsList, false));
+                    programmedAgencies.setAdapter(new CustomAgenciesVisitAdapter(programmingActivity, AgencyReportActivity.class, visitsList, false));
                 }
             } else{
                 Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();

@@ -44,6 +44,7 @@ import retrofit.Retrofit;
 public class AgencyReportActivity extends AppManager implements LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private GoogleApiClient mGoogleApiClient;
+    private Integer position;
     private String visitId;
     private String loggedUserId;
     private EditText interviewerName;
@@ -83,6 +84,7 @@ public class AgencyReportActivity extends AppManager implements LocationListener
         setContentView(R.layout.activity_agency_report);
         Intent intent = getIntent();
         setTitle(intent.getStringExtra("title"));
+        this.position = Integer.valueOf(intent.getIntExtra("position", -1));
         getSupportActionBar().setHomeButtonEnabled(true);
         interviewerName = (EditText) findViewById(R.id.interviewer_name);
         brochureQty = (EditText)findViewById(R.id.brochure_quantity);
@@ -151,6 +153,10 @@ public class AgencyReportActivity extends AppManager implements LocationListener
     private View.OnClickListener reportInterview = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+//            Intent returnIntent = new Intent();
+//            returnIntent.putExtra("position", position);
+//            setResult(Activity.RESULT_OK, returnIntent);
+//            finish();
             Date date = new Date();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
             dateHour = sdf.format(date);
@@ -192,8 +198,6 @@ public class AgencyReportActivity extends AppManager implements LocationListener
             }
             if (!cancel){
                 if (isNetworkConnected()){
-//                    mReportTask = new SendReport(visitId, loggedUserId, name, stockQty, brochures, commentsText, dateHour, lat, lng);
-//                    mReportTask.execute((Void) null);
                     makeRequest(getApplicationContext(), visitId, loggedUserId, name, stockQty, brochures, commentsText, dateHour, lat, lng);
                 }else{
                     VisitReport vr = new VisitReport(visitId, loggedUserId, name, stockQty, brochures, commentsText, lat, lng);
@@ -331,7 +335,11 @@ public class AgencyReportActivity extends AppManager implements LocationListener
                     Toast.makeText(context, "La visita programada se realizó exitosamente.", Toast.LENGTH_LONG).show();
                     VisitReport.deleteAll(VisitReport.class);
 
+                    Intent returnIntent = new Intent();
+                    returnIntent.putExtra("position", position);
+                    setResult(Activity.RESULT_OK, returnIntent);
                     finish();
+
                 }catch (NullPointerException e){
                     Toast.makeText(context, error, Toast.LENGTH_LONG).show();
                 }
